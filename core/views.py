@@ -266,7 +266,7 @@ class CheckoutView(View):
 def user_order_pdf(request):
     user = request.user
     try:
-        order = Order.objects.filter(ordered = True, paid = False,user = user)[0]
+        order = Order.objects.filter(ordered = True, paid = False,user = user)[1]
         # order1 = Order.objects.filter(ordered = True, paid = True,user = user)[0]
         # order2 = Order.objects.filter(ordered = True, paid = False,user = user)[0]
 

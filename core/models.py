@@ -39,16 +39,16 @@ class Category(models.Model):
         return self.name
 
     def get_absolute_url(self):
-<<<<<<< HEAD
+# <<<<<<< HEAD
         return reverse('core:order_summary',
                        )
     def get_absolute_url(self):
         return reverse('core:product_list_by_category',kwargs={"category_slug": self.slug}
                        )
-=======
-            return reverse('core:order_summary',
-                           )
->>>>>>> 8e79960e736869fa88c3d9b3e3e2e5768ff075bd
+# =======
+            # return reverse('core:order_summary',
+            #                )
+# >>>>>>> 8e79960e736869fa88c3d9b3e3e2e5768ff075bd
 
 
 class Item(models.Model):
