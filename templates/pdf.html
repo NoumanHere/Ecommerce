@@ -1,0 +1,51 @@
+<html>
+
+<body>
+    <h1>My Shop</h1>
+    <br>
+    <h2>{{ order.user }}</h2>
+    <p>
+        Invoice no. {{ order.id }}</br>
+        <span class="secondary">
+            {{ order.created|date:"M d, Y" }}
+        </span>
+    </p>
+    <h3>Bill to</h3>
+    <p>
+        <b>Name: </b>{{ order.billing_address.first_name }} {{ order.billing_address.last_name }}<br>
+        <b>Email:</b> {{ order.billing_address.email }} <br>
+        <b>Address: </b> {{ order.billing_address.address }} <br>
+        <b>City: </b> {{ order.billing_address.city }} <br>
+        <b>Zip Code: </b> {{ order.billing_address.zip_code }} <br>
+        <b>Order Id: </b> {{ order.order_id }} <br>
+        <h3>Items Details</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Quantity</th>
+                    <th>Cost</th>
+                    <th>Discount Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in order.items.all %}
+                <tr class="row{% cycle " 1 " "2 " %}">
+                    <td>{{ item.get_item_title }}</td>
+                    <td class="num">{{ item.quantity }}</td>
+                    <td class="num">${{ item.get_single_item_price }}</td>
+                    <td class="num">${{ item.get_discount_price }}</td>
+                </tr>
+                {% endfor %}
+                <tr class="total">
+                    <td colspan="3">Total</td>
+                    <td class="num">${{ order.get_total }}</td>
+                </tr>
+            </tbody>
+        </table>
+        <span class="{% if order.paid %}paid{% else %}pending{% endif %}">
+        {% if order.paid %}Paid{% else %}Pending payment{% endif %}
+    </span>
+</body>
+
+</html>

@@ -101,7 +101,7 @@
                         <!-- Content -->
                         <div class="text-center white-text mx-5 wow fadeIn">
                             <h1 class="mb-4">
-                                <strong>Learn Bootstrap 4 with MDB</strong>
+                                <strong>Mbata ecommerce site</strong>
                             </h1>
 
                             <p>
@@ -161,14 +161,15 @@
                         {% for item in products %}
 
                         <!--Grid column-->
-                        <div class="col-6 col-sm-5">
+                        <div class="col-6 col-md-4">
 
                             <!--Card-->
                             <div class="card">
 
                                 <!--Card image-->
                                 <div class="view overlay">
-                                    <img src="https://mdbootstrap.com/img/Photos/Horizontal/E-commerce/Vertical/12.jpg" class="card-img-top" alt="">
+                                    <!-- <img src="https://mdbootstrap.com/img/Photos/Horizontal/E-commerce/Vertical/12.jpg" class="card-img-top" alt=""> -->
+                                    <img src="{{ item.image.url }}" alt="" class="card-img-top">
                                     <a href="{{item.get_absolute_url}}">
 
                                         <div class="mask rgba-white-slight"></div>
