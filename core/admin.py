@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Order, OrderItem, Item, RequiredProduct, Category, Billing_Address,Profile,OrderUpdate
+from .models import Order, OrderItem, Item, RequiredProduct, Category, Billing_Address, Profile, OrderUpdate, Instructions
 from django.utils.safestring import mark_safe
 from django.urls import reverse
 
@@ -24,12 +24,13 @@ admin.site.register(Category, CategoryAdmin)
 
 
 class ItemAdmin(admin.ModelAdmin):
-    list_display = ['title', 'price',
-                    'discount_price', 'catagory', 'description']
+    list_display = ['title', 'image_tag', 'price',
+                    'discount_price', 'catagory', 'description', 'slug']
+    readonly_fields = ('image_tag',)
     list_filter = ['price', 'catagory']
     list_editable = ['price', 'discount_price', 'description']
 
-    # prepopulated_fields = {'slug': ('title',)}
+    prepopulated_fields = {'slug': ('title',)}
 
 
 admin.site.register(Item, ItemAdmin)
@@ -53,3 +54,6 @@ admin.site.register(Billing_Address)
 admin.site.register(Profile)
 
 admin.site.register(OrderUpdate)
+
+
+admin.site.register(Instructions)

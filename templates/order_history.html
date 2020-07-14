@@ -1,0 +1,37 @@
+{% extends 'profile.html' %} {% include 'head.html' %}{% block table %}
+<h3 style="text-align:center;">Order History</h3>
+
+<div class="table-responsive">
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Date</th>
+                <th scope="col">Order ID</th>
+                <th scope="col">Paid</th>
+                <th scope="col">Total</th>
+                <th>Invoice</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in orders %}
+            <tr>
+                <tr class="row{% cycle " 1 " "2 " %}"></tr>
+                <td>{{order.ordered_date}}</td>
+                <td>{{order.order_id}}</td>
+
+                {% if order.paid %}
+                <td>Paid</td>
+                {% else %}
+                <td>Pending</td>
+                {% endif %}
+                <td>{{order.get_total}}</td>
+                <td>
+                    <u><strong><a class="text-dark" href="{% url 'core:user_invoice' order.order_id %}">View
+                            Invoice</a></strong></u>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

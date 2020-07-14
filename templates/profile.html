@@ -1,58 +1,43 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends 'base.html' %} {% load crispy_forms_tags %} {% block content %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
-</head>
-
-<body>
-    <div class="container">
-        <div class="row my-2">
-            <div class="col-lg-8 order-lg-2">
-                <ul class="nav nav-tabs">
-                    <li class="nav-item">
-                        <a href="" data-target="#profile" data-toggle="tab" class="nav-link active">Profile</a>
-                    </li>
-                </ul>
-                <div class="tab-content py-4">
-                    <div class="tab-pane active" id="profile">
+<div class="mt-5">
+    <div class="row my-2">
+        <div class="col-lg-12 order-lg-2">
+            <ul class="nav nav-tabs">
+                <li class="nav-item">
+                    <a href="{% url 'core:profile' %}" data-target="#profile" data-toggle="tab" class="nav-link active">Profile</a>
+                </li>
+                <li>
+                    <a href="{% url 'core:order_history' %}" data-target="#profile" data-toggle="tab" class="nav-link active">Order
+                        History</a>
+                </li>
+            </ul>
+            {% block table %}
+            <div class="tab-content py-4">
+                <div class="row justify-content-center">
+                    <div class="col-lg-8 col-md-6 col-sm-8">
                         <h5 class="mb-3">User Profile</h5>
                         <div class="row">
                             <div class="col-md-6">
-                                <h6>{{ user }}</h6>
-                                <p>
-                                    Web Designer, UI/UX Engineer
-                                </p>
-                                <h6>Hobbies</h6>
-                                <p>
-                                    Indie music, skiing and hiking. I love the great outdoors.
-                                </p>
+                                <h5>First name: {{user.first_name}}</h5>
+                                <h5>Last name: {{user.last_name}}</h5>
+                                <h5>Username: {{user.username}}</h5>
+                                <h5>Email: {{user.email}}</h5>
+                                <div class="jumbotron">
+                                    <form method="post">
+                                        {% csrf_token %} {{form|crispy}}
+                                        <input class="btn btn-danger" type="submit">
+                                    </form>
+                                </div>
                             </div>
-
-                        </div>
-                        <!--/row-->
-                    </div>
-                    <div class="tab-pane" id="messages">
-                        <div class="alert alert-info alert-dismissable">
-                            <a class="panel-close close" data-dismiss="alert">×</a> This is an <strong>.alert</strong>. Use this to show important messages to the user.
                         </div>
                     </div>
+                    <!--/row-->
                 </div>
-            </div>
-            <div class="col-lg-4 order-lg-1 text-center">
-                <img src="//placehold.it/150" class="mx-auto img-fluid img-circle d-block" alt="avatar">
-                <h6 class="mt-2">Upload a different photo</h6>
-                <label class="custom-file">
-                    <input type="file" id="file" class="custom-file-input">
-                    <span class="custom-file-control">Choose file</span>
-                </label>
+
             </div>
         </div>
     </div>
+</div>
 
-</body>
-
-</html>
+{% endblock table %} {% endblock %}

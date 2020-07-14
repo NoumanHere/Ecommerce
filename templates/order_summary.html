@@ -16,47 +16,48 @@
                         <tr>
                             <th scope="col">#</th>
                             <th scope="col">Item title</th>
+                            <th scope="col">Item Color</th>
+                            <th scope="col">Item Size</th>
                             <th scope="col">Price</th>
                             <th scope="col">Quantity</th>
                             <th scope="col">Total Item Price</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {% for order_item in object.items.all %}
+                        {% for order_item in object %}
                         <tr>
                             <th scope="row">{{ forloop.counter }}</th>
                             <td>{{order_item.item.title}}</td>
+                            <td>{{order_item.color}}</td>
+                            <td>{{order_item.size}}</td>
                             <td>{{order_item.item.price}}</td>
-                            <td>
-                                <a href="{% url 'core:remove_single_item_from_cart' order_item.item.slug %}"><i
-                                        class="fas fa-minus mr-2"></i></a> {{order_item.quantity}}
-                                <a href="{% url 'core:add_to_cart' order_item.item.slug %}"><i
-                                        class="fas fa-plus ml-2"></i></a>
+                            <td>{{order_item.quantity}}
                             </td>
+
                             <td>
                                 {% if order_item.item.discount_price %} ${{order_item.get_total_discount_item_price}}(Discounted) {% else %} ${{order_item.get_total_item_price}} {% endif %}
-
                                 <a style="color: red;" href="{% url 'core:remove_from_cart' order_item.item.slug %}"><i
                                         class="fas fa-trash float-right"></i></a>
+
                             </td>
                         </tr>
                         {% empty %}
                         <tr>
-                            <td colspan="5">Your cart is empty</td>
+                            <td colspan="7">Your cart is empty</td>
                         </tr>
                         <tr>
-                            <td colspan="5">
+                            <td colspan="6">
                                 <a class="btn btn-primary float-right " href="/">Continue
                                     Shopping</a>
                             </td>
                         </tr>
-                        {% endfor %} {% if object.get_total %}
+                        {% endfor %} {% if object2.get_total %}
                         <tr>
-                            <td colspan="4"><strong>Order Total </strong></td>
-                            <td>${{ object.get_total }}</td>
+                            <td colspan="6"><strong>Order Total </strong></td>
+                            <td>${{ object2.get_total }}</td>
                         </tr>
                         <tr>
-                            <td colspan="5">
+                            <td colspan="7">
                                 <a class="btn btn-warning float-right ml-2" href="{% url 'core:checkout' %}">Proceed to
                                     Checkout</a>
                                 <a class="btn btn-primary float-right " href="/">Continue

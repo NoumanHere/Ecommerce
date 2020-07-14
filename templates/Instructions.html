@@ -1,0 +1,16 @@
+{% extends 'base.html' %} {% block content %}
+
+<title>Document</title>
+
+<body>
+    <main class="mt-5 pt-4">
+        <h2 style="text-align: center;">Instructions</h2>
+        <div class=" container dark-grey-text mt-5 ">
+            {% for i in ins %}
+            <h3 style="text-align: center;">{{i.text | safe}}</h3>
+            {% endfor %}
+        </div>
+    </main>
+</body>
+
+{% endblock %}

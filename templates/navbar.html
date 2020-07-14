@@ -1,10 +1,10 @@
-{% load cart_template_tags %}
+{% load cart_template_tags %} {% load static %}
 <nav class="navbar fixed-top navbar-expand-lg navbar-light white scrolling-navbar">
     <div class="container">
 
         <!-- Brand -->
-        <a class="navbar-brand waves-effect" href="" target="_blank">
-            <strong class="blue-text">Ecommerce</strong>
+        <a class="navbar-brand waves-effect" href="{% url 'core:product_list' %}"><img style="height: 50px;" class="img-responsive2" src="{% static 'images/ss.jpg' %}">
+            <strong class="blue-text"></strong>
         </a>
 
         <!-- Collapse -->
@@ -17,17 +17,22 @@
 
             <!-- Left -->
             <ul class="navbar-nav mr-auto">
-                <li class="nav-item active">
-                    <a class="nav-link waves-effect" href="{% url 'core:product_list' %}">Home
-                        <span class="sr-only">(current)</span>
-                    </a>
+                <li class="nav-item">
+                    <a class="nav-link waves-effect" href="{% url 'core:product_list' %}">Products</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link waves-effect" href="{% url 'core:checkout' %}" target="_blank">Checkout</a>
+                    <a class="nav-link waves-effect" href="{% url 'core:search' %}" target="">Search</a>
+                </li>
+                {% if request.user.is_authenticated %}
+                <li class="nav-item">
+                    <a class="nav-link waves-effect" href="{% url 'core:tracker' %}" target="">Tracker</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link waves-effect" href="" target="_blank">Products</a>
+                    <a class="nav-link waves-effect" href="{% url 'core:required_product' %}" target="">Required
+                        Product</a>
                 </li>
+                {% endif %}
+
             </ul>
 
             <!-- Right -->
@@ -61,22 +66,6 @@
             </ul>
 
             {% endif %}
-            <!-- <li class="nav-item">
-                    <a href="https://www.facebook.com/mdbootstrap" class="nav-link waves-effect" target="_blank">
-                        <i class="fab fa-facebook-f"></i>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="https://twitter.com/MDBootstrap" class="nav-link waves-effect" target="_blank">
-                        <i class="fab fa-twitter"></i>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="https://github.com/mdbootstrap/bootstrap-material-design" class="nav-link border border-light rounded waves-effect" target="_blank">
-                        <i class="fab fa-github mr-2"></i>MDB GitHub
-                    </a>
-                </li> -->
-            <!-- </ul> -->
 
         </div>
 

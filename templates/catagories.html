@@ -15,13 +15,12 @@
             {% if not catagory %}
             <li class="nav-item ">
                 {% endif %}
-                <a  class="nav-link" href="{% url "core:product_list" %} ">All</a>
+                <a class="nav-link" href="{% url 'core:product_list' %} ">All</a>
             </li>
-            
-                    
-            {% for c in categories %}
-            {% if category.slug == c.slug %}
-            <li  class="nav-item"> {% endif %}
+
+
+            {% for c in categories %} {% if category.slug == c.slug %}
+            <li class="nav-item"> {% endif %}
                 <a class="nav-link" href="{{ c.get_absolute_url }}">{{c.name}}</a>
             </li>
             {% endfor %}
@@ -29,11 +28,14 @@
         </ul>
         <!-- Links -->
 
-        <form class="form-inline">
+        <form class="form-inline" method="get" action="{% url 'core:search' %}">
+
             <div class="md-form my-0">
-                <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
+                <input class="form-control mr-sm-2" type="text" placeholder="Search" name="query" aria-label="Search">
             </div>
+            {% csrf_token %}
         </form>
+
     </div>
     <!-- Collapsible content -->
 

@@ -1,0 +1,24 @@
+{% extends 'base.html' %} {% block content %}{% include 'scripts.html' %}
+
+<body>
+    {% include 'navbar.html' %} {% include 'slider.html' %} {% include 'catagories.html' %} {% if query %}
+    <main class="mt-0 pt-0">
+        <div class="container dark-grey-text mt-5">
+            <!--Grid row-->
+            <h1>Products with "{{ query }}"</h1><br>
+            <h4>
+                {% with results.count as total_results %} Found {{ total_results }} result{{ total_results|pluralize }} {% endwith %}
+            </h4>
+            {% for i in results %}
+            <div class="row">
+                <div class="col-6 col-md-4">
+                    <h4><a href="{{ i.get_absolute_url }}">{{ i.title }}</a></h4>
+                    <img src="{{i.image.url}}" alt=""> {% empty %}
+                </div>
+            </div>
+            <p>There are no results for your query.</p>
+            {% endfor %}
+            <button class="btn btn-primary"><a href="{% url 'core:search' %}"></a>Search again</button> {% else %} {% endif %}
+        </div>
+    </main> {% endblock %}
+</body>

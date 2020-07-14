@@ -1,0 +1,74 @@
+<html>
+
+<body>
+    <h1>My Shop</h1>
+    <br>
+    <h2>{{ order.user }}</h2>
+    <p>
+        Invoice no. {{ order.id }}</br>
+        <span class="secondary">
+            {{ order.created|date:"M d, Y" }}
+        </span>
+    </p>
+    <h3>Bill to</h3>
+    <p>
+        <b>Name: </b>{{ order.billing_address.first_name }} {{ order.billing_address.last_name }}<br>
+        <b>Email:</b> {{ order.billing_address.email }} <br>
+        <b>Address: </b> {{ order.billing_address.address }} <br>
+        <b>City: </b> {{ order.billing_address.city }} <br>
+        <b>Zip Code: </b> {{ order.billing_address.zip_code }} <br>
+        <b>Order Id: </b> {{ order.order_id }} <br>
+        <h3>Items Details</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Quantity</th>
+                    <th>Cost</th>
+                    <th>Discount Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in order.items.all %}
+                <tr class="row{% cycle " 1 " "2 " %}">
+                    <td>{{ item.get_item_title }}</td>
+                    <td class="num">{{ item.quantity }}</td>
+                    <td class="num">${{ item.get_single_item_price }}</td>
+                    <td class="num">${{ item.get_discount_price }}</td>
+                </tr>
+                {% endfor %}
+                {% if order.half_paid %}
+                <tr class="total">
+                    <td colspan="3">Total Amount</td>
+                    <td class="num">${{ order.get_total }}</td>
+                </tr>
+                    <tr class="row">
+                    <td colspan="3">Paid Amount</td>
+                    <td class="num">-{{ order.paid_amount }}</td>
+                </tr>
+                {% for item in order.items.all %}
+                    <tr class="total">
+                    <td colspan="3">Remaining Amount</td>
+                    <td class="num">${{ item.get_remaining }}</td>
+                </tr>
+                {% endfor %}
+                {% else %}
+                   <tr class="total">
+                    <td colspan="3">Total</td>
+                    <td class="num">${{ order.get_total }}</td>
+                </tr>
+                {% endif %}
+            </tbody>
+        </table>
+
+        {% if order.fully_paid %}
+        <span class="paid">Paid</span>
+        {% elif order.half_paid %}
+        <span class="pending">Pending payment</span>
+        {% else %}
+        <span class="pending">Pending</span>
+        {% endif %}
+    </span>
+</body>
+
+</html>

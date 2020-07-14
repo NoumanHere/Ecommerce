@@ -22,6 +22,9 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'crispy_forms',
+    'pwa',
+    'django.contrib.postgres',
+    'ckeditor'
 ]
 SITE_ID = 1
 
@@ -32,6 +35,7 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
+    'django.middleware.gzip.GZipMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -67,21 +71,29 @@ USE_TZ = True
 # Static Files
 
 # STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static_files')]
-# STATIC_ROOT = os.path.join(BASE_DIR, "static")
+STATIC_ROOT = '/home/nouman/STUDY/Project/JustDjango/django_project_boilerplate/static2'
+CKEDITOR_UPLOAD_PATH = "/home/nouman/STUDY/Project/JustDjango/django_project_boilerplate/media/ckeditor"
 # STATICFILES_DIRS = [STATIC_DIR]
-STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
-# STATICFILES_DIRS = [os.path.join(BASE_DIR,"static"),
-                    # 'django_project_boilerplate/Ecommerce/static']
+# STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
+STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 STATIC_URL = '/static/'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": os.path.join(BASE_DIR, 'db.sqlite3')
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'E2',
+        'USER': 'postgres',
+        'PASSWORD': '112456',
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
+    #     "default": {
+    #         "ENGINE": "django.db.backends.sqlite3",
+    #         "NAME": os.path.join(BASE_DIR, 'db.sqlite3')
+    #     }
 }
 
 if ENVIRONMENT == 'production':
@@ -122,3 +134,24 @@ ACCOUNT_EMAIL_CONFIRMATION_ANONYMOUS_REDIRECT_URL = True
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_USERNAME_REQUIRED = True
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
+# ACCOUNT_EMAIL_VERIFICATION = ''
+ACCOUNT_EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URL = 'None'
+
+
+# Pwa Configurations
+PWA_APP_NAME = 'Ecommerce Site'
+PWA_APP_DESCRIPTION = "My app description"
+PWA_APP_THEME_COLOR = '#0A0302'
+PWA_APP_BACKGROUND_COLOR = '#ffffff'
+PWA_APP_DISPLAY = 'standalone'
+PWA_APP_SCOPE = '/'
+PWA_APP_ORIENTATION = 'any'
+PWA_APP_START_URL = '/'
+PWA_APP_STATUS_BAR_COLOR = 'default'
+PWA_APP_ICONS = [{'src': '/static/images/c.png', 'sizes': '192x192'}]
+PWA_APP_ICONS_APPLE = [
+    {'src': '/static/images/b.png', 'sizes': '192x190'}]
+PWA_APP_SPLASH_SCREEN = [{'src': '/static/images/icons/splash-640x1136.png',
+                          'media': '(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)'}]
+PWA_APP_DIR = 'ltr'
+PWA_APP_LANG = 'en-US'

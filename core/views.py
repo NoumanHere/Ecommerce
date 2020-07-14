@@ -1,112 +1,117 @@
+from allauth.account.forms import ChangePasswordForm
+from django.contrib.postgres.search import TrigramSimilarity
+from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank
+from django.utils.safestring import mark_safe
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+import json
+import weasyprint
+from django.template.loader import render_to_string
+from django.http import HttpResponse
+from django.conf import settings
+from django.contrib.admin.views.decorators import staff_member_required
+from django.contrib.auth import authenticate
+from core.forms import RequiredProductForm, CheckoutForm, SearchForm, ChoicesForm, OrderItemForm
+from allauth.account.forms import LoginForm, SignupForm
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required
+from django.utils import timezone
 from django.contrib import messages
 from django.core.exceptions import ObjectDoesNotExist
-from django.shortcuts import render, get_object_or_404, redirect,reverse
+from django.shortcuts import render, get_object_or_404, redirect, reverse
 from django.views.generic import ListView, DetailView, View
-from .models import Item, OrderItem, Order, RequiredProduct, Category, Billing_Address, Profile, OrderUpdate
-from django.utils import timezone
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin
-# from core.forms import CheckoutForm
-from allauth.account.forms import LoginForm, SignupForm
-from core.forms import RequiredProductForm, CheckoutForm
-from django.contrib.auth import authenticate
-
-from django.contrib.admin.views.decorators import staff_member_required
-from django.conf import settings
-from django.http import HttpResponse
-from django.template.loader import render_to_string
-import weasyprint
-import json
-from django.utils.safestring import mark_safe
-
-
-# def form_view(request):
-#     if request.method == 'POST':
-#         form = LoginForm(request.POST)
-#         if form.is_valid():
-#             print(form.cleaned_data['password'])
-#             pass  # does nothing, just trigger the validation
-#     else:
-#         form = LoginForm()
-#     return render(request, 'form.html', {'form': form})
-
-
-class HomeView(ListView):
-    model = Item
-    context_object_name = 'home_list'
-    template_name = 'home-page.html'
-#     queryset = Item.objects.all()
-
-#     def get_context_data(self, **kwargs):
-#         context = super(HomeView, self).get_context_data(**kwargs)
-#         # context['items'] = Item.objects.all()
-#         context['categories'] = Category.objects.all()
-#         # And so on for more models
-#         return context
-
-# template_name = 'home-page.html'
-
-# all_models_dict = {
-#     "items": Item.objects.all(),
-#     "categories":Category.objects.all()
-# "extra_context" : {"role_list" : Role.objects.all(),
-#                    "venue_list": Venue.objects.all(),
-#                    #and so on for all the desired models...
-#                    }
-# }
-# def get_context_data(self. **kwargs):
-#     context = super(HomeView, self).get_context_data(**kwargs)
-#     Items_context['items'] = Item.objects.all()
-#     categories_context['categories'] = Category.objects.all()
-# return context
-
-
-class OrderSummaryView(LoginRequiredMixin, View):
-    def get(self, *args, **kwargs):
-        try:
-            order = Order.objects.get(user=self.request.user, ordered=False)
-
-            context = {
-                'object': order
-            }
-            return render(self.request, 'order_summary.html', context)
-        except ObjectDoesNotExist:
-            messages.warning(self.request, 'You donot have an active order')
-            return redirect('/')
-
-
-def home(request):
-    context = {
-        'items': Item.objects.all()
-    }
-    return render(request, 'home-page.html', context)
-
-
-class ItemDetailView(DetailView):
-    model = Item
-    template_name = 'product-page.html'
-
-
-@login_required
-def products(request):
-    context = {
-        'items': Item.objects.all()
-    }
-    return render(request, 'product-page.html', context)
+from .models import Item, OrderItem, Order, RequiredProduct, Category, Billing_Address, Profile, OrderUpdate, Instructions
 
 
 def product_list(request, category_slug=None):
     category = None
     categories = Category.objects.all()
-    products = Item.objects.all()
+    products = Item.objects.all().order_by('-price')
     if category_slug:
         category = get_object_or_404(Category, slug=category_slug)
         products = Item.objects.filter(catagory=category)
+    paginator = Paginator(products, 2)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
     return render(request,
                   'home-page.html',
                   {'category': category,
                    'categories': categories,
-                   'products': products})
+                   'products': products,
+                   'page_obj': page_obj})
+
+
+@login_required
+def item_detail(request, slug):
+    form = OrderItemForm()
+    item = get_object_or_404(Item, slug=slug)
+    if request.method == 'POST':
+        form = OrderItemForm(request.POST)
+        if form.is_valid():
+            ordered_date = timezone.now()
+            user = request.user
+            quantity = form.cleaned_data['quantity']
+            print(quantity)
+            color = form.cleaned_data['color']
+            size = form.cleaned_data['size']
+            print(color)
+            ordered_date = timezone.now()
+            order_qs = Order.objects.all().filter(
+                user=user, email=request.user.email, ordered=False)
+            print(order_qs)
+            if order_qs.exists():
+                order = order_qs[0]
+                print(order)
+                if order.items.filter(item__slug=item.slug, color=color, size=size, user=request.user).exists():
+                    order_item = OrderItem.objects.get(
+                        user=user,
+                        item=item,
+                        color=color,
+                        size=size
+                    )
+                    quantity = form.cleaned_data['quantity']
+                    print(quantity)
+                    order_item.quantity += quantity
+                    order_item.save()
+                    messages.info(request, "This item quantity was Updated.")
+                    return redirect('core:order_summary')
+                else:
+                    order_item = OrderItem.objects.create(
+                        user=user,
+                        item=item,
+                        color=form.cleaned_data['color'],
+                        size=form.cleaned_data['size'],
+                        quantity=form.cleaned_data['quantity']
+                    )
+                    order_item.save()
+                    order.items.add(order_item)
+                    print("this one")
+                    messages.info(request, "This item was added to your cart.")
+                    return redirect('core:product_detail', slug=slug)
+            else:
+                ordered_date = timezone.now()
+                order = Order.objects.create(user=request.user,
+                                             ordered_date=ordered_date, email=request.user.email, Product=item)
+                order_item = OrderItem.objects.create(
+                    user=user,
+                    item=item,
+                    color=form.cleaned_data['color'],
+                    size=form.cleaned_data['size'],
+                    quantity=form.cleaned_data['quantity']
+                )
+                order.items.add(order_item)
+                print("this two")
+                messages.info(request, "This item was added to your cart.")
+                return redirect('core:order_summary')
+        else:
+            form = OrderItemForm()
+            return render(request, 'test-page.html', {
+                'form': form,
+                'item': item
+            })
+    return render(request, 'test-page.html', {
+        'form': form,
+        'item': item
+    })
 
 
 @login_required
@@ -128,14 +133,14 @@ def add_to_cart(request, slug):
         else:
             order.items.add(order_item)
             messages.info(request, "This item was added to your cart.")
-            return redirect('core:product', slug=slug)
+            return redirect('core:product_detail', slug=slug)
     else:
         ordered_date = timezone.now()
         order = Order.objects.create(user=request.user,
                                      ordered_date=ordered_date, email=request.user.email)
         order.items.add(order_item)
         messages.info(request, "This item was added to your cart.")
-    return redirect('core:product', slug=slug)
+    return redirect('core:order_summary')
 
 
 @login_required
@@ -155,11 +160,12 @@ def remove_from_cart(request, slug):
             )[0]
             order.items.remove(order_item)
             order_item.delete()
+            print("This delete??/")
             messages.info(request, "This item was removed from your cart.")
             return redirect('core:order_summary')
         else:
             messages.info(request, "This item was not in your cart.")
-            return redirect('core:product', slug=slug)
+            return redirect('core:order_summary')
     else:
         messages.info(request, "You do not have any order now.")
         return redirect('core:product', slug=slug)
@@ -190,11 +196,26 @@ def remove_single_item_from_cart(request, slug):
             return redirect('core:order_summary')
         else:
             messages.info(request, "This item was not in your cart.")
-            return redirect('core:product', slug=slug)
+            return redirect('core:product_list_by_category', slug=catagory_slug)
     else:
         messages.info(request, "You do not have any order now.")
-        return redirect('core:product', slug=slug)
-    return redirect('core:product', slug=slug)
+        return redirect('core:product_detail', slug=slug)
+    return redirect('core:product_detail', slug=slug)
+
+
+@login_required
+def order_summary(request):
+    # Orders_items = Order.objects.all().filter(user=request.user, ordered=False)
+    Orders_items = OrderItem.objects.filter(
+        user=request.user, ordered=False)
+    Orders = Order.objects.all().filter(user=request.user, ordered=False)
+    # print(Orders[0])
+    # print(str(Orders[1]) + str(Orders[0]))
+    context = {
+        'object': Orders_items,
+        'object2': Orders[0]
+    }
+    return render(request, 'order_summary.html', context)
 
 
 class CheckoutView(View):
@@ -211,13 +232,13 @@ class CheckoutView(View):
             order = Order.objects.get(user=self.request.user, ordered=False)
             if form.is_valid():
                 user = self.request.user
+                print(user)
                 first_name = form.cleaned_data['first_name']
                 last_name = form.cleaned_data['last_name']
                 email = form.cleaned_data['email']
                 address = form.cleaned_data['address']
                 postal_code = form.cleaned_data['postal_code']
                 city = form.cleaned_data['city']
-                zip_code = form.cleaned_data['zip_code']
                 billing_address = Billing_Address(
                     user=user,
                     first_name=first_name,
@@ -225,73 +246,50 @@ class CheckoutView(View):
                     email=email,
                     address=address,
                     postal_code=postal_code,
-                    zip_code=zip_code,
                     city=city
                 )
                 billing_address.save()
                 order.billing_address = billing_address
-                
+
                 order_items = order.items.all()
-                order_items.update(ordered = True)
+                order_items.update(ordered=True)
                 for item in order_items:
                     item.save()
 
                 order.ordered = True
                 order.save()
                 messages.info(self.request, 'Your order was successful')
-                return redirect('core:user_invoice')
-                # html = render_to_string(
-                #     'pdf.html', {
-                #         'order': order,
-                #     }
-                # )
-                # messages.info(self.request, 'Your order was successful')
-                # response = HttpResponse(content_type='application/pdf')
-                # response['Content-Disposition'] = 'filename="order_{}.pdf"'.format(
-                #     order.id)
-                # weasyprint.HTML(string=html).write_pdf(response,
-                #                                        stylesheets=[weasyprint.CSS(
-                #                                            settings.STATIC_ROOT + 'css/pdf.css')])
-                # return response
+                return redirect('core:Instructions')
         except ObjectDoesNotExist:
             messages.warning(self.request, 'You donot have an active order')
             return redirect('core:order_summary')
 
         return redirect('core:checkout')
 
-# def invoice(request):
-#     user = request.user
-#     order = get_object_or_404(Order,ordered = True, paid = False,user = user)
 
-def user_order_pdf(request):
+def user_order_pdf(request, order_id):
     user = request.user
     try:
-        order = Order.objects.filter(ordered = True, paid = False,user = user)[1]
-        # order1 = Order.objects.filter(ordered = True, paid = True,user = user)[0]
-        # order2 = Order.objects.filter(ordered = True, paid = False,user = user)[0]
-
+        # order_id = Order.objects.get(order_id).filter(user=user)
+        order = Order.objects.filter(
+            ordered=True, order_id=order_id, user=user)[0]
 
         print(order)
-        # first_name = order.billing_address.first_name
-        # last_name = order.billing_address.last_name
-        # email = order.billing_address.email
-        # address = order.billing_address.address
-        # city = order.billing_address.city
-        # order_id = order.order_id
         html = render_to_string('pdf.html',
                                 {'order': order,
+                                 'order_id': order_id,
                                  })
         response = HttpResponse(content_type='application/pdf')
         response['Content-Disposition'] = 'filename="order_{}.pdf"'.format(
-        order.id)
+            order.id)
         weasyprint.HTML(string=html).write_pdf(response,
                                                stylesheets=[weasyprint.CSS(
                                                    settings.STATIC_ROOT + 'css/pdf.css')])
 
         return response
     except ObjectDoesNotExist:
-            messages.warning(request, 'You do not have an order.')
-            return redirect('core:product_list')
+        messages.warning(request, 'You do not have an order.')
+        return redirect('core:product_list')
 
 
 @staff_member_required
@@ -343,6 +341,34 @@ def required_product(request):
                   {'form': form})
 
 
+@login_required
+def Tracker(request):
+    if request.method == "POST":
+        orderId = request.POST.get('orderId', '')
+        print(orderId)
+        order = Order.objects.filter(
+            order_id=orderId, user=request.user)
+        print(order)
+        if len(order) > 0:
+            update = OrderUpdate.objects.filter(order_id=orderId)
+            updates = []
+            if update:
+                for i in update:
+                    updates.append(i.update_desc)
+                return render(request, 'tracker.html', {
+                    'update': updates[0]
+                })
+            else:
+                updates.append('No')
+                return render(request, 'tracker.html', {
+                    'update': updates[0]
+                })
+        else:
+            return render(request, 'tracker.html', {
+                'Info': "Your Credentials do not match. Please try again."
+            })
+
+    return render(request, 'tracker.html')
 
 
 class UserProfile(LoginRequiredMixin, DetailView):
@@ -351,32 +377,54 @@ class UserProfile(LoginRequiredMixin, DetailView):
     template_name = 'profile.html'
 
 
-@login_required
-def Tracker(request):
-    if request.method == "POST":
-        orderId = request.POST.get('orderId', '')
-        print(orderId)
-        email = request.POST.get('email', '')
-        print(email)
-        order = Order.objects.filter(order_id=orderId, user=request.user,email = email)
-        print(order)
-        if len(order) > 0:
-            update = OrderUpdate.objects.filter(order_id=orderId)
+def item_search(request):
+    form = SearchForm()
+    query = None
+    results = []
+    if 'query' in request.GET:
+        form = SearchForm(request.GET)
+        if form.is_valid():
+            query = form.cleaned_data['query']
+            search_vector = SearchVector('title', 'description')
+            search_query = SearchQuery(query)
+            results = Item.objects.annotate(
+                similarity=TrigramSimilarity('title', query),
+            ).filter(similarity__gt=0.3).order_by('-similarity')
+    return render(request, 'search.html',
+                  {'form': form,
+                   'query': query,
+                   'results': results})
 
-            updates = []
-            for i in update:
-                updates.append(i.update_desc)
-            # order = Order.objects.filter(user = request.user,email = email)
-            # order = order[0]
-            
-            # print(order.get_total())
-            
-            return render(request,'tracker.html',{
-                'update':updates
-                })
-        else:
-            return HttpResponse('{}')
-        # except Exception as e:
-        #     return HttpResponse('{}')
 
-    return render(request, 'tracker.html')
+def user_profile(request):
+    user = request.user
+    form = ChangePasswordForm()
+    if request.method == 'POST':
+        form = ChangePasswordForm(request.POST)
+        form.save()
+        messages.info(request, 'Your password has been changed')
+        return redirect('core:profile')
+    else:
+        form = ChangePasswordForm()
+        return render(request, 'profile.html', {
+            'user': request.user,
+            'form': form
+        })
+
+
+def order_history(request):
+    user = request.user
+    Orders = Order.objects.all().filter(user=request.user)
+    OrderItems = OrderItem.objects.all().filter(user=user)
+    return render(request, 'order_history.html', {
+        'orders': Orders,
+        'order_items': OrderItems
+    })
+
+
+def Ins(request):
+    model = Instructions.objects.all()
+    print(model[0])
+    return render(request, 'Instructions.html', {
+        'ins': model
+    })

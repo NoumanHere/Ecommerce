@@ -1,0 +1,109 @@
+{% extends 'base.html' %} {% load crispy_forms_tags %} {% block content %}
+
+<body>
+
+    <!-- Navbar -->
+    {% include 'navbar.html' %}
+    <!-- Navbar -->
+
+    <!--Main layout-->
+    <main class="mt-5 pt-4">
+        <div class="container dark-grey-text mt-5">
+
+            <!--Grid row-->
+            <div class="row wow fadeIn">
+
+                <!--Grid column-->
+                <div class="col-md-6 mb-4">
+
+                    <img src="{{ item.image.url }}" class="img-fluid" alt="">
+
+                </div>
+                <!--Grid column-->
+
+                <!--Grid column-->
+                <div class="col-md-6 mb-4">
+
+                    <!--Content-->
+                    <div class="p-4">
+
+                        <div class="mb-3">
+                            <a href="">
+                                <span class="badge purple mr-1">{{item.catagory}}</span>
+                            </a>
+                        </div>
+
+                        <p class="lead">
+                            <span class="mr-1">
+                                {% if item.discount_price %}
+                                <del>${{item.price}}</del>
+                            </span>
+                            <span>${{item.discount_price}}</span> {% else %}
+                            <span>${{item.price}}</span>
+                        </p>
+                        {% endif %}
+                        <p class="lead font-weight-bold">Description</p>
+
+                        <p>{{item.description}}</p>
+                        <form method="post">
+                            {{form|crispy}} {% csrf_token %}
+                            <button class="btn btn-primary btn-md my-0 p" type="submit">Add to cart
+                                <i class="fas fa-shopping-cart ml-1"></i>
+                            </button>
+
+                        </form>
+
+                        <!-- <a href='{{item.get_add_to_cart_url }}' class="btn btn-primary btn-md my-0 p">Add to cart
+                        </a> {% if request.user.is_authenticated %}
+                        <a href='{{item.get_remove_from_cart_url }}' class="btn btn-danger btn-md my-0 p">Remove form
+                            cart</a> {% endif %} -->
+                    </div>
+                    <!--Content-->
+
+                </div>
+                <!--Grid column-->
+
+            </div>
+            <!--Grid row-->
+            <hr>
+
+            <div class="row wow fadeIn">
+
+                <!--Grid column-->
+                <div class="col-lg-4 col-md-12 mb-4">
+                    {% if object.image1 %}
+
+                    <img src="{{ object.image1.url }}" class="img-fluid" alt=""> {% endif %}
+                </div>
+                <!--Grid column-->
+
+                <!--Grid column-->
+                <div class="col-lg-4 col-md-6 mb-4">
+                    {% if object.image1 %}
+
+                    <a href="{{item.get_absolute_url}}"><img src="{{ object.image2.url }}" class="img-fluid" alt=""></a>
+                    {% endif %}
+
+                </div>
+                <!--Grid column-->
+
+                <!--Grid column-->
+                <div class="col-lg-4 col-md-6 mb-4">
+                    {% if object.image1 %}
+
+                    <img src="{{ object.image3.url }}" class="img-fluid" alt=""> {% endif %}
+
+                </div>
+
+
+
+
+            </div>
+    </main>
+    <!--Main layout-->
+
+    <!--Footer-->
+    {% include "scripts.html" %}
+</body>
+
+{% endblock %}
