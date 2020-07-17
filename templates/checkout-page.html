@@ -28,65 +28,44 @@
                             <div class="row">
 
                                 <!--Grid column-->
-                                 <div class="col-md-6 mb-2">
+                                <div class="col-md-10 mb-2">
 
                                     <!--firstName-->
-                                    <div class="md-form ">
+                                    <div class="md-form mb-5">
                                         <!-- <input type="text" id="firstName" class="form-control"> -->
-                                        {{form.first_name}}
-                                        <label for="firstName" class="">First name</label>
+                                        {{form.full_name}}
+                                        <label for="firstName" class="">Full name</label>
                                     </div>
 
                                 </div>
-                                <!--Grid column-->
-
-                                <!--Grid column-->
-                                <div class="col-md-6 mb-2">
-
-                                    <!--lastName-->
-                                    <div class="md-form">
-                                        <!-- <input type="text" id="lastName" class="form-control"> -->
-                                        {{form.last_name}}
-                                        <label for="lastName" class="">Last name</label>
-                                    </div>
-                                    </div>
-
-                                <!--Grid column-->
-
-                                <!--Grid column-->
 
                             </div>
-                            <!--Grid row-->
 
-                            <!--Username-->
+                            <div class="md-form mb-4">
 
-
-                            <!--email-->
-                            <div class="md-form mb-5">
-                                <!-- <input type="text" id="email" class="form-control" placeholder="youremail@example.com"> -->
                                 {{form.phone_number}}
                                 <label for="phone_number" class="">Phone Number</label>
                             </div>
+                            <div class="row">
+                                <div class="md-form mb-5">
+                                    {{form.region}}
+                                    <!-- <input type="text" id="address" class="form-control" placeholder="1234 Main St"> -->
+                                    <label for="region" class="">Region</label>
+                                </div>
 
-                            <div class="md-form mb-5">
-                                {{form.region}}
-                                <!-- <input type="text" id="address" class="form-control" placeholder="1234 Main St"> -->
-                                <label for="region" class="">Region</label>
+                                <!--address-->
+                                <div class="md-form mb-5">
+                                    {{form.address}}
+                                    <!-- <input type="text" id="address" class="form-control" placeholder="1234 Main St"> -->
+                                    <label for="address" class="">Address</label>
+                                </div>
+
+                                <div class="md-form mb-5">
+                                    {{form.city}}
+                                    <!-- <input type="text" id="address" class="form-control" placeholder="1234 Main St"> -->
+                                    <label for="address" class="">City</label>
+                                </div>
                             </div>
-
-                            <!--address-->
-                            <div class="md-form mb-5">
-                                {{form.address}}
-                                <!-- <input type="text" id="address" class="form-control" placeholder="1234 Main St"> -->
-                                <label for="address" class="">Address</label>
-                            </div>
-
-                            <div class="md-form mb-5">
-                                {{form.city}}
-                                <!-- <input type="text" id="address" class="form-control" placeholder="1234 Main St"> -->
-                                <label for="address" class="">City</label>
-                            </div>
-
 
                             <button class="btn btn-primary btn-lg btn-block" type="submit">Continue to checkout</button> {% csrf_token %}
                         </form>
@@ -96,13 +75,13 @@
 
                 </div>
 
-                
 
-                </div>
-                <!--Grid column-->
 
             </div>
-            <!--Grid row-->
+            <!--Grid column-->
+
+        </div>
+        <!--Grid row-->
 
         </div>
     </main>

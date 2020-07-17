@@ -72,7 +72,7 @@ class Item(models.Model):
     discount_price = models.FloatField(null=True, blank=True)
     catagory = models.ForeignKey(Category, on_delete=models.CASCADE)
     label = models.CharField(choices=LABEL_CHOICES, max_length=20)
-    slug = models.SlugField(unique=True)
+    slug = models.SlugField(unique=True, max_length=255)
     description = models.TextField()
 
     def __str__(self):
@@ -140,7 +140,7 @@ class Order(models.Model):
     def random_string():
         return str(random.randint(10000, 99999))
     rand_value = random_string()
-    order_id = models.CharField(default=rand_value, max_length=20)
+    order_id = models.CharField(default=rand_value, max_length=255)
     Product = models.ForeignKey(
         Item, on_delete=models.CASCADE, blank=True, null=True)
     items = models.ManyToManyField(OrderItem)
@@ -176,8 +176,7 @@ class Order(models.Model):
 class Billing_Address(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
                              on_delete=models.CASCADE)
-    first_name = models.CharField(max_length=30)
-    last_name = models.CharField(max_length=30)
+    full_name = models.CharField(max_length=50, blank=True, null=True)
     email = models.EmailField()
     phone_number = PhoneNumberField()
     region = models.CharField(max_length=50)

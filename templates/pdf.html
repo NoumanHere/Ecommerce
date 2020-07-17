@@ -12,9 +12,9 @@
     </p>
     <h3>Bill to</h3>
     <p>
-        <b>Name: </b>{{ order.billing_address.first_name }} {{order.billing_address.last_name}}<br>
+        <b>Name: </b>{{ order.billing_address.full_name}}<br>
         <b>Email:</b> {{ order.billing_address.email }} <br>
-        <b>Phone Number</b>{{order.billing_address.phone_number}}<br>
+        <b>Phone Number: </b>{{order.billing_address.phone_number}}<br>
         <b>Region: </b> {{ order.billing_address.region }} <br>
         <b>Address: </b> {{ order.billing_address.address }} <br>
         <b>City: </b> {{ order.billing_address.city }} <br>
@@ -32,7 +32,7 @@
             </thead>
             <tbody>
                 {% for item in order.items.all %}
-                <tr  class="row{% cycle " 1 " "2 " %}">
+                <tr class="row{% cycle " 1 " "2 " %}">
                     <td>{{ item.get_item_title }}</td>
                     <td class="num">{{ item.quantity }}</td>
                     <td class="num">${{ item.get_single_item_price }}</td>
@@ -72,5 +72,7 @@
         <span class="pending">Pending</span> {% endif %}
         </span>
 </body>
+
+
 
 </html>

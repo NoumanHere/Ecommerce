@@ -235,8 +235,7 @@ class CheckoutView(View):
             if form.is_valid():
                 user = self.request.user
                 print(user)
-                first_name = form.cleaned_data['first_name']
-                last_name = form.cleaned_data['last_name']
+                full_name = form.cleaned_data['full_name']
                 email = self.request.user.email
                 phone_number = form.cleaned_data['phone_number']
                 region = form.cleaned_data['region']
@@ -244,8 +243,7 @@ class CheckoutView(View):
                 city = form.cleaned_data['city']
                 billing_address = Billing_Address(
                     user=user,
-                    first_name=first_name,
-                    last_name=last_name,
+                    full_name=full_name,
                     email=email,
                     phone_number=phone_number,
                     region=region,

@@ -15,19 +15,25 @@ class RequiredProductForm(forms.ModelForm):
 
 
 class CheckoutForm(forms.Form):
-    first_name = forms.CharField(widget=forms.TextInput(
+    # first_name = forms.CharField(widget=forms.TextInput(
+    #     attrs={
+    #         'id': "firstName",
+    #         'class': 'form-control'
+    #     }
+    # ))
+    # last_name = forms.CharField(widget=forms.TextInput(
+    #     attrs={
+    #         'id': "lastName",
+    #         'class': 'form-control'
+    #     }
+    # ))
+    full_name = forms.CharField(widget=forms.TextInput(
         attrs={
-            'id': "firstName",
-            'class': 'form-control'
+            'id': "fullname",
+            'class': 'form-control',
+            'placeholder': 'Username'
         }
     ))
-    last_name = forms.CharField(widget=forms.TextInput(
-        attrs={
-            'id': "lastName",
-            'class': 'form-control'
-        }
-    ))
-    # username = forms.CharField(widget=)
     # email = forms.EmailField(widget=forms.EmailInput(
     #     attrs={
     #         'id': "email",

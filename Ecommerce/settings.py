@@ -41,8 +41,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    # Simplified static file serving.
-    # https://warehouse.python.org/project/whitenoise/
     'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
@@ -84,22 +82,22 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'd22q28ufavsb79',
-        'USER': 'pszmxzwfagfpvq',
-        'PASSWORD': 'b38376d2fad9429c11081fe98ed81b71650920771d2fb04b8d4ff1fe07fed17d',
-        'HOST': 'ec2-54-246-87-132.eu-west-1.compute.amazonaws.com',
-        'PORT': '5432',
-    }
     # 'default': {
     #     'ENGINE': 'django.db.backends.postgresql_psycopg2',
-    #     'NAME': 'E2',
-    #     'USER': 'postgres',
-    #     'PASSWORD': '112456',
-    #     'HOST': 'localhost',
+    #     'NAME': 'd22q28ufavsb79',
+    #     'USER': 'pszmxzwfagfpvq',
+    #     'PASSWORD': 'b38376d2fad9429c11081fe98ed81b71650920771d2fb04b8d4ff1fe07fed17d',
+    #     'HOST': 'ec2-54-246-87-132.eu-west-1.compute.amazonaws.com',
     #     'PORT': '5432',
     # }
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'E2',
+        'USER': 'postgres',
+        'PASSWORD': '112456',
+        'HOST': 'localhost',
+        'PORT': '5432',
+    }
     #     "default": {
     #         "ENGINE": "django.db.backends.sqlite3",
     #         "NAME": os.path.join(BASE_DIR, 'db.sqlite3')
