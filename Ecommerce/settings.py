@@ -5,7 +5,7 @@ ENVIRONMENT = os.getenv('ENVIRONMENT', 'development')
 
 DEBUG = True
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-# STATIC_DIR = os.path.join(BASE_DIR, 'static')
+STATIC_DIR = os.path.join(BASE_DIR, 'static')
 SECRET_KEY = '-05sgp9!deq=q1nltm@^^2cc+v29i(tyybv3v2t77qi66czazj'
 ALLOWED_HOSTS = ['*']
 
@@ -73,11 +73,12 @@ USE_TZ = True
 # Static Files
 
 # STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static_files')]
-STATIC_ROOT = '/home/nouman/STUDY/Project/JustDjango/django_project_boilerplate/static2/'
+# STATIC_ROOT = '/home/nouman/STUDY/Project/JustDjango/django_project_boilerplate/static2/'
 CKEDITOR_UPLOAD_PATH = "/home/nouman/STUDY/Project/JustDjango/django_project_boilerplate/media/ckeditor"
 # STATICFILES_DIRS = [STATIC_DIR]
 # STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
-STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
+STATICFILES_DIRS = [STATIC_DIR]
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATIC_URL = '/static/'
 
 MEDIA_URL = '/media/'
@@ -86,12 +87,20 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'E2',
-        'USER': 'postgres',
-        'PASSWORD': '112456',
-        'HOST': 'localhost',
+        'NAME': 'd22q28ufavsb79',
+        'USER': 'pszmxzwfagfpvq',
+        'PASSWORD': 'b38376d2fad9429c11081fe98ed81b71650920771d2fb04b8d4ff1fe07fed17d',
+        'HOST': 'ec2-54-246-87-132.eu-west-1.compute.amazonaws.com',
         'PORT': '5432',
     }
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.postgresql_psycopg2',
+    #     'NAME': 'E2',
+    #     'USER': 'postgres',
+    #     'PASSWORD': '112456',
+    #     'HOST': 'localhost',
+    #     'PORT': '5432',
+    # }
     #     "default": {
     #         "ENGINE": "django.db.backends.sqlite3",
     #         "NAME": os.path.join(BASE_DIR, 'db.sqlite3')

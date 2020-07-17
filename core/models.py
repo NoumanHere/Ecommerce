@@ -223,4 +223,4 @@ class Instructions(models.Model):
         return self.text[0:8]
 
     def get_absolute_url(self):
-        return reverse('core:user_invoice', order_id = order_id)
+        return reverse('core:user_invoice', order_id=order_id)
