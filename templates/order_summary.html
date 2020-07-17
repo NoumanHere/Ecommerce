@@ -16,8 +16,7 @@
                         <tr>
                             <th scope="col">#</th>
                             <th scope="col">Item title</th>
-                            <th scope="col">Item Color</th>
-                            <th scope="col">Item Size</th>
+                            <th scope="col">Item Properties</th>
                             <th scope="col">Price</th>
                             <th scope="col">Quantity</th>
                             <th scope="col">Total Item Price</th>
@@ -28,8 +27,7 @@
                         <tr>
                             <th scope="row">{{ forloop.counter }}</th>
                             <td>{{order_item.item.title}}</td>
-                            <td>{{order_item.color}}</td>
-                            <td>{{order_item.size}}</td>
+                            <td>Color: {{order_item.color}} & Size: {{order_item.size}}</td>
                             <td>{{order_item.item.price}}</td>
                             <td>{{order_item.quantity}}
                             </td>
@@ -43,7 +41,7 @@
                         </tr>
                         {% empty %}
                         <tr>
-                            <td colspan="7">Your cart is empty</td>
+                            <td colspan="6">Your cart is empty</td>
                         </tr>
                         <tr>
                             <td colspan="6">
@@ -53,11 +51,11 @@
                         </tr>
                         {% endfor %} {% if object2.get_total %}
                         <tr>
-                            <td colspan="6"><strong>Order Total </strong></td>
+                            <td colspan="5"><strong>Order Total </strong></td>
                             <td>${{ object2.get_total }}</td>
                         </tr>
                         <tr>
-                            <td colspan="7">
+                            <td colspan="6">
                                 <a class="btn btn-warning float-right ml-2" href="{% url 'core:checkout' %}">Proceed to
                                     Checkout</a>
                                 <a class="btn btn-primary float-right " href="/">Continue

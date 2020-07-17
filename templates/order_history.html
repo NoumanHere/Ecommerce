@@ -1,4 +1,5 @@
 {% extends 'profile.html' %} {% include 'head.html' %}{% block table %}
+{% load humanize %} 
 <h3 style="text-align:center;">Order History</h3>
 
 <div class="table-responsive">
@@ -16,7 +17,7 @@
             {% for order in orders %}
             <tr>
                 <tr class="row{% cycle " 1 " "2 " %}"></tr>
-                <td>{{order.ordered_date}}</td>
+                <td>{{order.ordered_date | naturaltime}}</td>
                 <td>{{order.order_id}}</td>
 
                 {% if order.paid %}

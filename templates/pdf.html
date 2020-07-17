@@ -7,16 +7,17 @@
     <p>
         Invoice no. {{ order.id }}</br>
         <span class="secondary">
-            {{ order.created|date:"M d, Y" }}
+            {{ order.ordered_date|date:"M d, Y" }}
         </span>
     </p>
     <h3>Bill to</h3>
     <p>
-        <b>Name: </b>{{ order.billing_address.first_name }} {{ order.billing_address.last_name }}<br>
+        <b>Name: </b>{{ order.billing_address.first_name }} {{order.billing_address.last_name}}<br>
         <b>Email:</b> {{ order.billing_address.email }} <br>
+        <b>Phone Number</b>{{order.billing_address.phone_number}}<br>
+        <b>Region: </b> {{ order.billing_address.region }} <br>
         <b>Address: </b> {{ order.billing_address.address }} <br>
         <b>City: </b> {{ order.billing_address.city }} <br>
-        <b>Zip Code: </b> {{ order.billing_address.zip_code }} <br>
         <b>Order Id: </b> {{ order.order_id }} <br>
         <h3>Items Details</h3>
         <table>
@@ -26,32 +27,30 @@
                     <th>Quantity</th>
                     <th>Cost</th>
                     <th>Discount Price</th>
-                    <th>Size</th>
-                    <th>Color</th>
+                    <th>Properties</th>
                 </tr>
             </thead>
             <tbody>
                 {% for item in order.items.all %}
-                <tr class="row{% cycle " 1 " "2 " %}">
+                <tr  class="row{% cycle " 1 " "2 " %}">
                     <td>{{ item.get_item_title }}</td>
                     <td class="num">{{ item.quantity }}</td>
                     <td class="num">${{ item.get_single_item_price }}</td>
                     <td class="num">${{ item.get_discount_price }}</td>
-                    <td class="num">{{ item.size }}</td>
-                    <td class="num">{{ item.color }}</td>
+                    <td class="num">{{ item.size }} & {{ item.color }}</td>
                 </tr>
                 {% endfor %} {% if order.half_paid %}
                 <tr class="total">
-                    <td colspan="2">Total Amount</td>
+                    <td colspan="5">Total Amount</td>
                     <td class="num">${{ order.get_total }}</td>
                 </tr>
                 <tr class="row">
-                    <td colspan="3">Paid Amount</td>
+                    <td colspan="5">Paid Amount</td>
                     <td class="num">-{{ order.paid_amount }}</td>
                 </tr>
                 {% for item in order.items.all %}
                 <tr class="total">
-                    <td colspan="3">Remaining Amount</td>
+                    <td colspan="5">Remaining Amount</td>
                     <td class="num">${{ order.get_remaining_amount }}</td>
                 </tr>
                 {% endfor %} {% else %}
@@ -60,7 +59,7 @@
                     <td class="num">${{ order.get_total }}</td>
                 </tr>
                 <tr class="row">
-                    <td colspan="2">Paid Amount</td>
+                    <td colspan="5">Paid Amount</td>
                     <td class="num">{{ order.paid_amount }}</td>
                 </tr>
                 {% endif %}

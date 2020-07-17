@@ -3,7 +3,7 @@
     <div class="container">
 
         <!-- Brand -->
-        <a class="navbar-brand waves-effect" href="{% url 'core:product_list' %}"><img style="height: 50px;" class="img-responsive2" src="{% static 'images/ss.jpg' %}">
+        <a class="navbar-brand waves-effect" href="{% url 'core:product_list' %}"><img style="height: 50px;" class="img-responsive2" src="{% static 'images/ss.ico' %}">
             <strong class="blue-text"></strong>
         </a>
 
@@ -24,6 +24,9 @@
                     <a class="nav-link waves-effect" href="{% url 'core:search' %}" target="">Search</a>
                 </li>
                 {% if request.user.is_authenticated %}
+                <li class="nav-item">
+                    <a class="nav-link waves-effect" href="{% url 'core:profile' %}" target="">Profile</a>
+                </li>
                 <li class="nav-item">
                     <a class="nav-link waves-effect" href="{% url 'core:tracker' %}" target="">Tracker</a>
                 </li>

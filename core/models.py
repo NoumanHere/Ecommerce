@@ -4,6 +4,7 @@ from django.shortcuts import reverse
 import random
 from django.utils.html import mark_safe
 from ckeditor.fields import RichTextField
+from phonenumber_field.modelfields import PhoneNumberField
 LABEL_CHOICES = (
     ('P', 'primary'),
     ('S', 'secondary'),
@@ -175,12 +176,12 @@ class Order(models.Model):
 class Billing_Address(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
                              on_delete=models.CASCADE)
-    first_name = models.CharField(max_length=50)
-    last_name = models.CharField(max_length=50)
+    first_name = models.CharField(max_length=30)
+    last_name = models.CharField(max_length=30)
     email = models.EmailField()
+    phone_number = PhoneNumberField()
+    region = models.CharField(max_length=50)
     address = models.CharField(max_length=250)
-    postal_code = models.CharField(max_length=20)
-    zip_code = models.CharField(max_length=20)
     city = models.CharField(max_length=100)
 
     def __str__(self):
@@ -193,8 +194,10 @@ class RequiredProduct(models.Model):
     ProductName = models.CharField(max_length=100)
     catagory = models.CharField(max_length=30)
     description = models.TextField()
-    image = models.ImageField(upload_to='required/catagories/%Y/%m/%d',
-                              blank=True)
+    image = models.ImageField(upload_to='required/%Y/%m/%d')
+
+    def __str__(self):
+        return self.ProductName
 
 
 class OrderUpdate(models.Model):
@@ -218,3 +221,6 @@ class Instructions(models.Model):
 
     def __str__(self):
         return self.text[0:8]
+
+    def get_absolute_url(self):
+        return reverse('core:user_invoice', order_id = order_id)

@@ -208,13 +208,15 @@ def order_summary(request):
     # Orders_items = Order.objects.all().filter(user=request.user, ordered=False)
     Orders_items = OrderItem.objects.filter(
         user=request.user, ordered=False)
-    Orders = Order.objects.all().filter(user=request.user, ordered=False)
+    try:
+        Orders = Order.objects.filter(user=request.user, ordered=False)[0]
+    except:
+        Orders = Order.objects.filter(user=request.user, ordered=False)
     # print(Orders[0])
     # print(str(Orders[1]) + str(Orders[0]))
     context = {
         'object': Orders_items,
-        'object2': Orders[0]
-    }
+        'object2': Orders}
     return render(request, 'order_summary.html', context)
 
 
@@ -235,17 +237,19 @@ class CheckoutView(View):
                 print(user)
                 first_name = form.cleaned_data['first_name']
                 last_name = form.cleaned_data['last_name']
-                email = form.cleaned_data['email']
+                email = self.request.user.email
+                phone_number = form.cleaned_data['phone_number']
+                region = form.cleaned_data['region']
                 address = form.cleaned_data['address']
-                postal_code = form.cleaned_data['postal_code']
                 city = form.cleaned_data['city']
                 billing_address = Billing_Address(
                     user=user,
                     first_name=first_name,
                     last_name=last_name,
                     email=email,
+                    phone_number=phone_number,
+                    region=region,
                     address=address,
-                    postal_code=postal_code,
                     city=city
                 )
                 billing_address.save()
@@ -258,7 +262,7 @@ class CheckoutView(View):
 
                 order.ordered = True
                 order.save()
-                messages.info(self.request, 'Your order was successful')
+                messages.info(self.request, 'Your order was successful.')
                 return redirect('core:Instructions')
         except ObjectDoesNotExist:
             messages.warning(self.request, 'You donot have an active order')
@@ -312,29 +316,15 @@ def admin_order_pdf(request, order_id):
 
 def required_product(request):
     if request.method == 'POST':
-        form = RequiredProductForm(request.POST)
+        form = RequiredProductForm(data=request.POST, files=request.FILES)
         if form.is_valid():
             username = form.cleaned_data['username']
-            email = form.cleaned_data['email']
             # print(username)
-            print(request.user)
-            print(email)
-            print(username)
-            if email == request.user.email:
-                pass
-            else:
-                messages.warning(
-                    request, 'Your credentials do not match, Please try again!')
-                form = RequiredProductForm()
-                return render(request, 'required-product-form.html',
-                              {'form': form})
-
             email = request.user.email
-
             form.save()
-            return render(request, 'required-product-form.html',
-                          {'form': form,
-                           'email': email})
+            messages.info(
+                request, "Your request have been submitted. Thanks:)")
+            return redirect('core:product_list')
     else:
         form = RequiredProductForm()
     return render(request, 'required-product-form.html',
@@ -414,11 +404,9 @@ def user_profile(request):
 
 def order_history(request):
     user = request.user
-    Orders = Order.objects.all().filter(user=request.user)
-    OrderItems = OrderItem.objects.all().filter(user=user)
+    Orders = Order.objects.all().filter(user=request.user).order_by('-ordered_date')
     return render(request, 'order_history.html', {
         'orders': Orders,
-        'order_items': OrderItems
     })
 
 
@@ -427,4 +415,11 @@ def Ins(request):
     print(model[0])
     return render(request, 'Instructions.html', {
         'ins': model
+    })
+
+
+def testview(request):
+    items = Item.objects.all()
+    return render(request, 'test.html', {
+        'item': items
     })

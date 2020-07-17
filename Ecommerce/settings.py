@@ -7,7 +7,7 @@ DEBUG = True
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # STATIC_DIR = os.path.join(BASE_DIR, 'static')
 SECRET_KEY = '-05sgp9!deq=q1nltm@^^2cc+v29i(tyybv3v2t77qi66czazj'
-ALLOWED_HOSTS = ['localhost', 'necommerce.herokuapp.com']
+ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -24,7 +24,9 @@ INSTALLED_APPS = [
     'crispy_forms',
     'pwa',
     'django.contrib.postgres',
-    'ckeditor'
+    'ckeditor',
+    'phonenumber_field',
+    'django.contrib.humanize'
 ]
 SITE_ID = 1
 
@@ -71,7 +73,7 @@ USE_TZ = True
 # Static Files
 
 # STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static_files')]
-STATIC_ROOT = '/home/nouman/STUDY/Project/JustDjango/django_project_boilerplate/static2'
+STATIC_ROOT = '/home/nouman/STUDY/Project/JustDjango/django_project_boilerplate/static2/'
 CKEDITOR_UPLOAD_PATH = "/home/nouman/STUDY/Project/JustDjango/django_project_boilerplate/media/ckeditor"
 # STATICFILES_DIRS = [STATIC_DIR]
 # STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
@@ -150,7 +152,7 @@ PWA_APP_START_URL = '/'
 PWA_APP_STATUS_BAR_COLOR = 'default'
 PWA_APP_ICONS = [{'src': '/static/images/c.png', 'sizes': '192x192'}]
 PWA_APP_ICONS_APPLE = [
-    {'src': '/static/images/b.png', 'sizes': '192x190'}]
+    {'src': '/static/images/b.png', 'sizes': '192x192'}]
 PWA_APP_SPLASH_SCREEN = [{'src': '/static/images/icons/splash-640x1136.png',
                           'media': '(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)'}]
 PWA_APP_DIR = 'ltr'

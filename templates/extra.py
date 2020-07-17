@@ -1,63 +1,31 @@
-from core.models import Order, Item, Choices
-from core.models import RequiredProduct
-from django.forms import ModelForm
-from allauth.account.forms import LoginForm
-from django import forms
-import random
-from django.shortcuts import reverse
-from django.db import models
+from allauth.account.forms import ChangePasswordForm
+from django.contrib.postgres.search import TrigramSimilarity
+from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank
+from django.utils.safestring import mark_safe
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+import json
+import weasyprint
+from django.template.loader import render_to_string
+from django.http import HttpResponse
+from django.conf import settings
+from django.contrib.admin.views.decorators import staff_member_required
+from django.contrib.auth import authenticate
+from core.forms import RequiredProductForm, CheckoutForm, SearchForm, ChoicesForm, OrderItemForm
+from allauth.account.forms import LoginForm, SignupForm
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required
+from django.utils import timezone
 from django.contrib import messages
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render, get_object_or_404, redirect, reverse
 from django.views.generic import ListView, DetailView, View
-from .models import Item, OrderItem, Order, RequiredProduct, Category, Billing_Address, Profile, OrderUpdate
-from django.utils import timezone
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin
-# from core.forms import CheckoutForm
-from allauth.account.forms import LoginForm, SignupForm
-from core.forms import RequiredProductForm, CheckoutForm, SearchForm, ChoicesForm
-from django.contrib.auth import authenticate
-
-from django.contrib.admin.views.decorators import staff_member_required
-from django.conf import settings
-from django.http import HttpResponse
-from django.template.loader import render_to_string
-import weasyprint
-import json
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.utils.safestring import mark_safe
-# Search Implementation
-from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank
-from django.contrib.postgres.search import TrigramSimilarity
-from allauth.account.forms import ChangePasswordForm
+from .models import Item, OrderItem, Order, RequiredProduct, Category, Billing_Address, Profile, OrderUpdate, Instructions
 
 
-# def form_view(request):
-#     if request.method == 'POST':
-#         form = LoginForm(request.POST)
-#         if form.is_valid():
-#             print(form.cleaned_data['password'])
-#             pass  # does nothing, just trigger the validation
-#     else:
-#         form = LoginForm()
-#     return render(request, 'form.html', {'form': form})
-
-
-# class HomeView(ListView):
-#     model = Item
-#     context_object_name = 'home_list'
-#     template_name = 'home-page.html'
-
-# def home(request):
-#     context = {
-#         'items': Item.objects.all()
-#     }
-#     return render(request, 'home-page.html', context)
 def product_list(request, category_slug=None):
     category = None
     categories = Category.objects.all()
-    products = Item.objects.all()
+    products = Item.objects.all().order_by('-price')
     if category_slug:
         category = get_object_or_404(Category, slug=category_slug)
         products = Item.objects.filter(catagory=category)
@@ -71,72 +39,79 @@ def product_list(request, category_slug=None):
                    'products': products,
                    'page_obj': page_obj})
 
-# @login_required
-# def products(request):
-#     context = {
-#         'items': Item.objects.all()
-#     }
-#     return render(request, 'product-page.html', context)
-
 
 @login_required
 def item_detail(request, slug):
-    form = ChoicesForm()
+    form = OrderItemForm()
     item = get_object_or_404(Item, slug=slug)
-    print(item)
     if request.method == 'POST':
-        form = ChoicesForm(request.POST)
+        form = OrderItemForm(request.POST)
         if form.is_valid():
             ordered_date = timezone.now()
-            order = Order.objects.create(user=request.user,
-                                         ordered_date=ordered_date, email=request.user.email)
+            user = request.user
+            quantity = form.cleaned_data['quantity']
+            print(quantity)
             color = form.cleaned_data['color']
             size = form.cleaned_data['size']
             print(color)
-            item = get_object_or_404(Item, slug=slug, color=color, size=size)
-            order_item, created = OrderItem.objects.create(item=item,
-                                                           item__slug=item.slug,
-                                                           user=request.user,
-                                                           ordered=False)
-            messages.info(request, "This item was added to your cart.")
-            return redirect('core:order_summary')
-            # order_qs = Order.objects.filter(
-            #     user=request.user, ordered=False, email=request.user.email)
-            # if order_qs.exists():
-            #     order = order_qs[0]
-            #     if order.items.filter(item__slug=item.slug).exists():
-            #         order_item.quantity += 1
-            #         order_item.save()
-            #         messages.info(request, "This item quantity was Updated.")
-            # return redirect('core:order_summary')
-        # else:
-        #     ordered_date = timezone.now()
-        #     order = Order.objects.create(user=request.user,
-        #                                 ordered_date=ordered_date, email=request.user.email)
-        #     order_item = OrderItem.objects.create(item=item,
-        #                                         user=request.user, ordered=False, color=color, size=size)
-        #     order.items.add(order_item)
-        #     # order.items.add(order_item)
-        #     messages.info(request, "This item was added to your cart.")
-        #     return redirect('core:product_detail', slug=slug)
-        # else:
-        #     return render(request, 'order_summary.html')
-            # color = form.cleaned_data['color']
-            # size = form.cleaned_data['size']
-            # print(color)
-            # order_item.color = color
-            # order_item.size = size
-            # order_item.save()
-            # return render(request, 'product-page.html', {
-            #     'form': form
-            # })
+            ordered_date = timezone.now()
+            order_qs = Order.objects.all().filter(
+                user=user, email=request.user.email, ordered=False)
+            print(order_qs)
+            if order_qs.exists():
+                order = order_qs[0]
+                print(order)
+                if order.items.filter(item__slug=item.slug, color=color, size=size, user=request.user).exists():
+                    order_item = OrderItem.objects.get(
+                        user=user,
+                        item=item,
+                        color=color,
+                        size=size
+                    )
+                    quantity = form.cleaned_data['quantity']
+                    print(quantity)
+                    order_item.quantity += quantity
+                    order_item.save()
+                    messages.info(request, "This item quantity was Updated.")
+                    return redirect('core:order_summary')
+                else:
+                    order_item = OrderItem.objects.create(
+                        user=user,
+                        item=item,
+                        color=form.cleaned_data['color'],
+                        size=form.cleaned_data['size'],
+                        quantity=form.cleaned_data['quantity']
+                    )
+                    order_item.save()
+                    order.items.add(order_item)
+                    print("this one")
+                    messages.info(request, "This item was added to your cart.")
+                    return redirect('core:product_detail', slug=slug)
+            else:
+                ordered_date = timezone.now()
+                order = Order.objects.create(user=request.user,
+                                             ordered_date=ordered_date, email=request.user.email, Product=item)
+                order_item = OrderItem.objects.create(
+                    user=user,
+                    item=item,
+                    color=form.cleaned_data['color'],
+                    size=form.cleaned_data['size'],
+                    quantity=form.cleaned_data['quantity']
+                )
+                order.items.add(order_item)
+                print("this two")
+                messages.info(request, "This item was added to your cart.")
+                return redirect('core:order_summary')
         else:
-            form = ChoicesForm()
-        return render(request, 'product-page.html', {
-            'form': form,
-            'item': item
-        })
-    return redirect('core:product_list')
+            form = OrderItemForm()
+            return render(request, 'test-page.html', {
+                'form': form,
+                'item': item
+            })
+    return render(request, 'test-page.html', {
+        'form': form,
+        'item': item
+    })
 
 
 @login_required
@@ -185,11 +160,12 @@ def remove_from_cart(request, slug):
             )[0]
             order.items.remove(order_item)
             order_item.delete()
+            print("This delete??/")
             messages.info(request, "This item was removed from your cart.")
             return redirect('core:order_summary')
         else:
             messages.info(request, "This item was not in your cart.")
-            return redirect('core:product', slug=slug)
+            return redirect('core:order_summary')
     else:
         messages.info(request, "You do not have any order now.")
         return redirect('core:product', slug=slug)
@@ -220,25 +196,26 @@ def remove_single_item_from_cart(request, slug):
             return redirect('core:order_summary')
         else:
             messages.info(request, "This item was not in your cart.")
-            return redirect('core:product_list_by_category', slug=slug)
+            return redirect('core:product_list_by_category', slug=catagory_slug)
     else:
         messages.info(request, "You do not have any order now.")
         return redirect('core:product_detail', slug=slug)
     return redirect('core:product_detail', slug=slug)
 
 
-class OrderSummaryView(LoginRequiredMixin, View):
-    def get(self, *args, **kwargs):
-        try:
-            order = Order.objects.all()
-
-            context = {
-                'object': order
-            }
-            return render(self.request, 'order_summary.html', context)
-        except ObjectDoesNotExist:
-            messages.warning(self.request, 'You donot have an active order')
-            return redirect('/')
+@login_required
+def order_summary(request):
+    # Orders_items = Order.objects.all().filter(user=request.user, ordered=False)
+    Orders_items = OrderItem.objects.filter(
+        user=request.user, ordered=False)
+    Orders = Order.objects.all().filter(user=request.user, ordered=False)
+    # print(Orders[0])
+    # print(str(Orders[1]) + str(Orders[0]))
+    context = {
+        'object': Orders_items,
+        'object2': Orders[0]
+    }
+    return render(request, 'order_summary.html', context)
 
 
 class CheckoutView(View):
@@ -256,19 +233,21 @@ class CheckoutView(View):
             if form.is_valid():
                 user = self.request.user
                 print(user)
-                first_name = form.cleaned_data['first_name']
-                last_name = form.cleaned_data['last_name']
-                email = form.cleaned_data['email']
+                first_name = self.request.user.first_name
+                last_name = self.request.user.last_name
+                email = self.request.user.email
+                phone_number = form.cleaned_data['phone_number']
+                region = form.cleaned_data['region']
                 address = form.cleaned_data['address']
-                postal_code = form.cleaned_data['postal_code']
                 city = form.cleaned_data['city']
                 billing_address = Billing_Address(
                     user=user,
                     first_name=first_name,
                     last_name=last_name,
                     email=email,
+                    phone_number=phone_number,
+                    region=region,
                     address=address,
-                    postal_code=postal_code,
                     city=city
                 )
                 billing_address.save()
@@ -282,7 +261,7 @@ class CheckoutView(View):
                 order.ordered = True
                 order.save()
                 messages.info(self.request, 'Your order was successful')
-                return redirect('core:user_invoice')
+                return redirect('core:Instructions')
         except ObjectDoesNotExist:
             messages.warning(self.request, 'You donot have an active order')
             return redirect('core:order_summary')
@@ -290,23 +269,17 @@ class CheckoutView(View):
         return redirect('core:checkout')
 
 
-def user_order_pdf(request):
+def user_order_pdf(request, order_id):
     user = request.user
     try:
-        order = Order.objects.filter(ordered=True, paid=False, user=user)[0]
-        # I wanna make it search by the order
-        # order1 = Order.objects.filter(ordered = True, paid = True,user = user)[0]
-        # order2 = Order.objects.filter(ordered = True, paid = False,user = user)[0]
+        # order_id = Order.objects.get(order_id).filter(user=user)
+        order = Order.objects.filter(
+            ordered=True, order_id=order_id, user=user)[0]
 
         print(order)
-        # first_name = order.billing_address.first_name
-        # last_name = order.billing_address.last_name
-        # email = order.billing_address.email
-        # address = order.billing_address.address
-        # city = order.billing_address.city
-        # order_id = order.order_id
         html = render_to_string('pdf.html',
                                 {'order': order,
+                                 'order_id': order_id,
                                  })
         response = HttpResponse(content_type='application/pdf')
         response['Content-Disposition'] = 'filename="order_{}.pdf"'.format(
@@ -341,29 +314,15 @@ def admin_order_pdf(request, order_id):
 
 def required_product(request):
     if request.method == 'POST':
-        form = RequiredProductForm(request.POST)
+        form = RequiredProductForm(data=request.POST, files=request.FILES)
         if form.is_valid():
             username = form.cleaned_data['username']
-            email = form.cleaned_data['email']
             # print(username)
-            print(request.user)
-            print(email)
-            print(username)
-            if email == request.user.email:
-                pass
-            else:
-                messages.warning(
-                    request, 'Your credentials do not match, Please try again!')
-                form = RequiredProductForm()
-                return render(request, 'required-product-form.html',
-                              {'form': form})
-
             email = request.user.email
-
             form.save()
-            return render(request, 'required-product-form.html',
-                          {'form': form,
-                           'email': email})
+            messages.info(
+                request, "Your request have been submitted. Thanks:)")
+            return redirect('core:product_list')
     else:
         form = RequiredProductForm()
     return render(request, 'required-product-form.html',
@@ -375,61 +334,29 @@ def Tracker(request):
     if request.method == "POST":
         orderId = request.POST.get('orderId', '')
         print(orderId)
-        email = request.POST.get('email', '')
-        print(email)
         order = Order.objects.filter(
-            order_id=orderId, user=request.user, email=email)
+            order_id=orderId, user=request.user)
         print(order)
         if len(order) > 0:
             update = OrderUpdate.objects.filter(order_id=orderId)
-
             updates = []
-            for i in update:
-                updates.append(i.update_desc)
-            # order = Order.objects.filter(user = request.user,email = email)
-            # order = order[0]
-
-            # print(order.get_total())
-
-            return render(request, 'tracker.html', {
-                'update': updates
-            })
+            if update:
+                for i in update:
+                    updates.append(i.update_desc)
+                return render(request, 'tracker.html', {
+                    'update': updates[0]
+                })
+            else:
+                updates.append('No')
+                return render(request, 'tracker.html', {
+                    'update': updates[0]
+                })
         else:
-            return HttpResponse('{}')
-        # except Exception as e:
-        #     return HttpResponse('{}')
+            return render(request, 'tracker.html', {
+                'Info': "Your Credentials do not match. Please try again."
+            })
 
     return render(request, 'tracker.html')
-
-#     queryset = Item.objects.all()
-
-#     def get_context_data(self, **kwargs):
-#         context = super(HomeView, self).get_context_data(**kwargs)
-#         # context['items'] = Item.objects.all()
-#         context['categories'] = Category.objects.all()
-#         # And so on for more models
-#         return context
-
-# template_name = 'home-page.html'
-
-# all_models_dict = {
-#     "items": Item.objects.all(),
-#     "categories":Category.objects.all()
-# "extra_context" : {"role_list" : Role.objects.all(),
-#                    "venue_list": Venue.objects.all(),
-#                    #and so on for all the desired models...
-#                    }
-# }
-# def get_context_data(self. **kwargs):
-#     context = super(HomeView, self).get_context_data(**kwargs)
-#     Items_context['items'] = Item.objects.all()
-#     categories_context['categories'] = Category.objects.all()
-# return context
-
-
-# def invoice(request):
-#     user = request.user
-#     order = get_object_or_404(Order,ordered = True, paid = False,user = user)
 
 
 class UserProfile(LoginRequiredMixin, DetailView):
@@ -482,300 +409,129 @@ def order_history(request):
         'order_items': OrderItems
     })
 
-# def product_page(request,slug):
-#     form = ChoicesForm()
-#     item = get_object_or_404(Item, slug=slug)
-#     order_item, created = OrderItem.objects.get_or_create(item=item,
-#                                                           user=request.user,
-#                                                           ordered=False
-#                                                           )
-#     order_qs = Order.objects.filter(
-#         user=request.user, ordered=False, email=request.user.email)
-#     if request.method == 'POST':
-#         form = ChoicesForm(request.POST
-#         color = form.cleaned_data['color']
-#         size = form.cleaned_data['size']
-#         order_item = OrderItem.objects.g
+
+def Ins(request):
+    model = Instructions.objects.all()
+    print(model[0])
+    return render(request, 'Instructions.html', {
+        'ins': model
+    })
 
 
-# Models
-
-LABEL_CHOICES = (
-    ('P', 'primary'),
-    ('S', 'secondary'),
-    ('D', 'danger'),
-)
+def testview(request):
+    items = Item.objects.all()
+    return render(request, 'test.html', {
+        'item': items
+    })
 
 
-class Profile(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL,
-                             on_delete=models.CASCADE)
-    Profile_image = models.ImageField(upload_to='products/%Y/%m/%d',
-                                      blank=True)
-    first_name = models.CharField(max_length=30)
-    last_name = models.CharField(max_length=30)
-    email = models.EmailField()
-    bio = models.TextField(blank=True, null=True)
 
-    def __str__(self):
-        return f"{self.first_name} {self.last_name}"
+{% extends 'base.html' %} {% load crispy_forms_tags %} {% block content %}
 
+<body>
 
-class Category(models.Model):
-    name = models.CharField(max_length=200)
-    slug = models.SlugField(max_length=200,
-                            unique=True)
-    image = models.ImageField(blank=True, null=True)
+    <!-- Navbar -->
+    {% include 'navbar.html' %}
+    <!-- Navbar -->
 
-    class Meta:
-        ordering = ('name',)
-        verbose_name = 'category'
-        verbose_name_plural = 'categories'
+    <!--Main layout-->
+    <main class="mt-5 pt-4">
+        <div class="container dark-grey-text mt-5">
 
-    def __str__(self):
-        return self.name
+            <!--Grid row-->
+            <div class="row wow fadeIn">
 
-#     def get_absolute_url(self):
-# # <<<<<<< HEAD
-#         return reverse('core:order_summary',
-#                        )
-    def get_absolute_url(self):
-        return reverse('core:product_list_by_category', kwargs={"category_slug": self.slug})
+                <!--Grid column-->
+                <div class="col-md-6 mb-4">
 
+                    <img src="{{ item.image.url }}" class="img-fluid" alt="">
 
-COLOR_CHOICES = (
-    ('B', 'Black'),
-    ('W', 'White'),
-    ('R', 'Red')
-)
-SIZE_CHOICES = (
-    ('S', 'Small'),
-    ('M', 'Medium'),
-    ('L', 'Large')
-)
+                </div>
+                <!--Grid column-->
 
+                <!--Grid column-->
+                <div class="col-md-6 mb-4">
 
-class Item(models.Model):
-    title = models.CharField(max_length=100)
-    price = models.FloatField()
-    color = models.CharField(choices=COLOR_CHOICES, max_length=10, blank=True)
-    size = models.CharField(choices=SIZE_CHOICES, max_length=10, null=True)
-    image = models.ImageField()
-    image1 = models.ImageField(blank=True, null=True)
-    image2 = models.ImageField(blank=True, null=True)
-    image3 = models.ImageField(blank=True, null=True)
-    discount_price = models.FloatField(null=True, blank=True)
-    catagory = models.ForeignKey(Category, on_delete=models.CASCADE)
-    label = models.CharField(choices=LABEL_CHOICES, max_length=20)
-    slug = models.SlugField(unique=True)
-    description = models.TextField()
+                    <!--Content-->
+                    <div class="p-4">
 
-    def __str__(self):
-        return self.title
+                        <div class="mb-3">
+                            <a href="">
+                                <span class="badge purple mr-1">{{item.catagory}}</span>
+                            </a>
+                        </div>
 
-    def get_absolute_url(self):
-        return reverse("core:product_detail", kwargs={"slug": self.slug}
-                       )
+                        <p class="lead">
+                            <span class="mr-1">
+                                {% if item.discount_price %}
+                                <del>${{item.price}}</del>
+                            </span>
+                            <span>${{item.discount_price}}</span> {% else %}
+                            <span>${{item.price}}</span>
+                        </p>
+                        {% endif %}
+                        <p class="lead font-weight-bold">Description</p>
 
-    def get_add_to_cart_url(self):
-        return reverse("core:add_to_cart", kwargs={"slug": self.slug}
-                       )
+                        <p>{{item.description}}</p>
+                        <form method="post">
+                            {{form|crispy}} {% csrf_token %}
+                            <button class="btn btn-primary btn-md my-0 p" type="submit">Add to cart
+                                <i class="fas fa-shopping-cart ml-1"></i>
+                            </button>
 
-    def get_remove_from_cart_url(self):
-        return reverse("core:remove_from_cart", kwargs={"slug": self.slug}
-                       )
+                        </form>
 
+                        <!-- <a href='{{item.get_add_to_cart_url }}' class="btn btn-primary btn-md my-0 p">Add to cart
+                        </a> {% if request.user.is_authenticated %}
+                        <a href='{{item.get_remove_from_cart_url }}' class="btn btn-danger btn-md my-0 p">Remove form
+                            cart</a> {% endif %} -->
+                    </div>
+                    <!--Content-->
 
-class OrderItem(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
-                             blank=True, null=True)
-    item = models.ForeignKey(Item, on_delete=models.CASCADE)
-    color = models.CharField(max_length=20)
-    size = models.CharField(max_length=20)
-    quantity = models.IntegerField(default=1)
-    ordered = models.BooleanField(default=False)
+                </div>
+                <!--Grid column-->
 
-    # def __str__(self):
-    #     return f"{self.quantity} of {self.item.title}"
-    def __str__(self):
-        return f"{self.quantity} of {self.item.title} with {self.item.color} color"
+            </div>
+            <!--Grid row-->
+            <hr>
 
-    def get_item_title(self):
-        return self.item.title
+            <div class="row wow fadeIn">
 
-    def get_single_item_price(self):
-        return self.item.price
+                <!--Grid column-->
+                <div class="col-lg-4 col-md-12 mb-4">
+                    {% if object.image1 %}
 
-    def get_total_item_price(self):
-        return self.quantity * self.item.price
+                    <img src="{{ object.image1.url }}" class="img-fluid" alt=""> {% endif %}
+                </div>
+                <!--Grid column-->
 
-    def get_discount_price(self):
-        return self.item.discount_price
+                <!--Grid column-->
+                <div class="col-lg-4 col-md-6 mb-4">
+                    {% if object.image1 %}
 
-    def get_total_discount_item_price(self):
-        return self.quantity * self.item.discount_price
+                    <a href="{{item.get_absolute_url}}"><img src="{{ object.image2.url }}" class="img-fluid" alt=""></a>
+                    {% endif %}
 
-    def get_final_price(self):
-        if self.item.discount_price:
-            return self.get_total_discount_item_price()
-        else:
-            return self.get_total_item_price()
+                </div>
+                <!--Grid column-->
+
+                <!--Grid column-->
+                <div class="col-lg-4 col-md-6 mb-4">
+                    {% if object.image1 %}
+
+                    <img src="{{ object.image3.url }}" class="img-fluid" alt=""> {% endif %}
+
+                </div>
 
 
-class Order(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL,
-                             on_delete=models.CASCADE)
-    email = models.EmailField()
-
-    def random_string():
-        return str(random.randint(10000, 99999))
-    rand_value = random_string()
-    order_id = models.CharField(default=rand_value, max_length=20)
-    Product = models.ForeignKey(
-        Item, on_delete=models.CASCADE, blank=True, null=True)
-    items = models.ManyToManyField(OrderItem)
-    start_date = models.DateTimeField(auto_now_add=True)
-    ordered_date = models.DateTimeField(auto_now_add=True)
-    ordered = models.BooleanField(default=False)
-    paid = models.BooleanField(default=False)
-    half_paid = models.BooleanField(default=False)
-    paid_amount = models.PositiveIntegerField(default=0)
-    billing_address = models.ForeignKey('Billing_Address', on_delete=models.SET_NULL,
-                                        blank=True, null=True)
-
-    def __str__(self):
-        return f"{self.user.username} with the email {self.email}"
-
-    def get_total(self):
-        total = 0
-        for order_item in self.items.all():
-            total += order_item.get_final_price()
-        return total
-
-    def get_remaining_amount(self):
-        remaining = 0
-        total = self.get_total()
-        paid = 10
-        remaining = total - self.paid_amount
-        return remaining
-
-    def get_title(self):
-        return self.Product.title
 
 
-class Billing_Address(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL,
-                             on_delete=models.CASCADE)
-    first_name = models.CharField(max_length=50)
-    last_name = models.CharField(max_length=50)
-    email = models.EmailField()
-    address = models.CharField(max_length=250)
-    postal_code = models.CharField(max_length=20)
-    zip_code = models.CharField(max_length=20)
-    city = models.CharField(max_length=100)
+            </div>
+    </main>
+    <!--Main layout-->
 
-    def __str__(self):
-        return self.user.username
+    <!--Footer-->
+    {% include "scripts.html" %}
+</body>
 
-
-class RequiredProduct(models.Model):
-    username = models.CharField(max_length=30, blank=True)
-    email = models.EmailField()
-    ProductName = models.CharField(max_length=100)
-    catagory = models.CharField(max_length=30)
-    description = models.TextField()
-    image = models.ImageField(upload_to='required/catagories/%Y/%m/%d',
-                              blank=True)
-
-
-class OrderUpdate(models.Model):
-    # order = models.ForeignKey(Order, on_delete=models.CASCADE)
-    update_id = models.AutoField(primary_key=True)
-    order_id = models.IntegerField(default="")
-    update_desc = models.CharField(max_length=5000)
-    timestamp = models.DateField(auto_now_add=True)
-
-    def __str__(self):
-        return self.update_desc[0:7] + "..."
-
-
-class Choices(models.Model):
-    color = models.CharField(choices=COLOR_CHOICES, max_length=20)
-    size = models.CharField(choices=SIZE_CHOICES, max_length=20)
-
-
-class RequiredProductForm(forms.ModelForm):
-
-    class Meta:
-        model = RequiredProduct
-        fields = '__all__'
-
-
-class CheckoutForm(forms.Form):
-    first_name = forms.CharField(widget=forms.TextInput(
-        attrs={
-            'id': "firstName",
-            'class': 'form-control'
-        }
-    ))
-    last_name = forms.CharField(widget=forms.TextInput(
-        attrs={
-            'id': "lastName",
-            'class': 'form-control'
-        }
-    ))
-    # username = forms.CharField(widget=)
-    email = forms.EmailField(widget=forms.EmailInput(
-        attrs={
-            'id': "email",
-            'class': 'form-control',
-            'placeholder': 'user@exapmle.com'
-        }
-    ))
-    address = forms.CharField(widget=forms.TextInput(
-        attrs={
-            'id': "address",
-            'class': 'form-control',
-            'placeholder': '1234 Main Street 1'
-        }
-    ))
-    postal_code = forms.CharField(widget=forms.TextInput(attrs={
-        'placeholder': '1111',
-        'class': 'form-control',
-    }))
-    city = forms.CharField(widget=forms.TextInput(attrs={
-        'id': "address",
-        'class': 'form-control',
-        'placeholder': 'Your City'
-    }))
-
-
-class ChoicesForm(forms.ModelForm):
-
-    class Meta:
-        model = Item
-        fields = ['color', 'size']
-
-# class CheckoutForm(forms.ModelForm):
-
-#     class Meta:
-#         model = Order
-#         fields = ['first_name', 'last_name', 'email', 'address',
-#                   'postal_code', 'city', 'zip_code']
-
-
-class SearchForm(forms.Form):
-    query = forms.CharField(widget=forms.TextInput(
-        attrs={
-            'class': "form-control mr-sm-2",
-            'placeholder': "Search",
-            'aria-label': "Search"
-        }
-    ))
-
-
-class ChoicesForm(forms.ModelForm):
-
-    class Meta:
-        model = Choices
-        fields = '__all__'
+{% endblock %}

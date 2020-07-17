@@ -11,6 +11,7 @@ class RequiredProductForm(forms.ModelForm):
     class Meta:
         model = RequiredProduct
         fields = '__all__'
+        exclude = ['email']
 
 
 class CheckoutForm(forms.Form):
@@ -27,11 +28,26 @@ class CheckoutForm(forms.Form):
         }
     ))
     # username = forms.CharField(widget=)
-    email = forms.EmailField(widget=forms.EmailInput(
+    # email = forms.EmailField(widget=forms.EmailInput(
+    #     attrs={
+    #         'id': "email",
+    #         'class': 'form-control',
+    #         'placeholder': 'user@exapmle.com'
+    #     }
+    # ))
+    phone_number = forms.CharField(max_length=30, widget=forms.TextInput(
         attrs={
-            'id': "email",
+            'id': "phone_number",
             'class': 'form-control',
-            'placeholder': 'user@exapmle.com'
+            'placeholder': 'e.g. +12125552368'
+        }
+    ))
+
+    region = forms.CharField(widget=forms.TextInput(
+        attrs={
+            'id': "region",
+            'class': 'form-control',
+            'placeholder': 'Region'
         }
     ))
     address = forms.CharField(widget=forms.TextInput(
@@ -41,10 +57,6 @@ class CheckoutForm(forms.Form):
             'placeholder': '1234 Main Street 1'
         }
     ))
-    postal_code = forms.CharField(widget=forms.TextInput(attrs={
-        'placeholder': '1111',
-        'class': 'form-control',
-    }))
     city = forms.CharField(widget=forms.TextInput(attrs={
         'id': "address",
         'class': 'form-control',

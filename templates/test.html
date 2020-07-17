@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Filter</title>
+</head>
+
+<body>
+
+    {% for i in item %}
+    <h1>{{i.title}}</h1>
+    <h2>{{ i.price }}</h2>
+
+    {% if i.catagory.name == 'dsd' %}
+    <h2>test</h2>
+    {% endif %} {% endfor %}
+
+</body>
+
+</html>
