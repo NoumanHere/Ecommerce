@@ -74,15 +74,14 @@ USE_TZ = True
 
 # STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static_files')]
 # STATIC_ROOT = '/home/nouman/STUDY/Project/JustDjango/django_project_boilerplate/static2/'
-CKEDITOR_UPLOAD_PATH = "/home/nouman/STUDY/Project/JustDjango/django_project_boilerplate/media/ckeditor"
+CKEDITOR_UPLOAD_PATH = os.path.join(BASE_DIR, 'media/ckeditor')
 # STATICFILES_DIRS = [STATIC_DIR]
 # STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 STATICFILES_DIRS = [STATIC_DIR]
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles/')
 STATIC_URL = '/static/'
-
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
 DATABASES = {
     'default': {
