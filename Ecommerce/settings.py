@@ -26,7 +26,8 @@ INSTALLED_APPS = [
     'django.contrib.postgres',
     'ckeditor',
     'phonenumber_field',
-    'django.contrib.humanize'
+    'django.contrib.humanize',
+    'allauth.socialaccount.providers.google',
 ]
 SITE_ID = 1
 

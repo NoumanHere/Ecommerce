@@ -40,7 +40,6 @@ def product_list(request, category_slug=None):
                    'page_obj': page_obj})
 
 
-@login_required
 def item_detail(request, slug):
     form = OrderItemForm()
     item = get_object_or_404(Item, slug=slug)
@@ -50,7 +49,6 @@ def item_detail(request, slug):
             ordered_date = timezone.now()
             user = request.user
             quantity = form.cleaned_data['quantity']
-            print(quantity)
             color = form.cleaned_data['color']
             size = form.cleaned_data['size']
             print(color)
@@ -220,7 +218,7 @@ def order_summary(request):
     return render(request, 'order_summary.html', context)
 
 
-class CheckoutView(View):
+class CheckoutView(LoginRequiredMixin, View):
     def get(self, *args, **kwargs):
         form = CheckoutForm()
         context = {

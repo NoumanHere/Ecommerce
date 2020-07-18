@@ -45,6 +45,8 @@
                         <p class="lead font-weight-bold">Description</p>
 
                         <p>{{item.description}}</p>
+
+                        {% if user.is_authenticated %}
                         <form method="post">
                             {{form|crispy}} {% csrf_token %}
                             <button class="btn btn-primary btn-md my-0 p" type="submit">Add to cart
@@ -52,6 +54,14 @@
                             </button>
 
                         </form>
+                        {% else %}
+                        <form action="{% url 'account_login' %}">
+                            {{form|crispy}}
+                            <button class="btn btn-primary btn-md my-0 p" type="submit">Add to cart
+                                <i class="fas fa-shopping-cart ml-1"></i>
+                        </form>
+                        {% endif %}
+
 
                         <!-- <a href='{{item.get_add_to_cart_url }}' class="btn btn-primary btn-md my-0 p">Add to cart
                         </a> {% if request.user.is_authenticated %}
