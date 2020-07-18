@@ -2,7 +2,7 @@ from django import forms
 from allauth.account.forms import LoginForm
 from django.forms import ModelForm
 from core.models import RequiredProduct
-from core.models import Order, Item, Choices, OrderItem
+from core.models import Order, Item, OrderItem
 from allauth.account.forms import ChangePasswordForm
 
 
@@ -70,11 +70,11 @@ class CheckoutForm(forms.Form):
     }))
 
 
-class ChoicesForm(forms.ModelForm):
+# class ChoicesForm(forms.ModelForm):
 
-    class Meta:
-        model = Item
-        fields = ['color', 'size']
+#     class Meta:
+#         model = Item
+#         fields = ['color', 'size']
 
 # class CheckoutForm(forms.ModelForm):
 
@@ -94,16 +94,17 @@ class SearchForm(forms.Form):
     ))
 
 
-class ChoicesForm(forms.ModelForm):
-
-    class Meta:
-        model = Choices
-        fields = '__all__'
-
-
 class OrderItemForm(forms.ModelForm):
 
     class Meta:
         model = OrderItem
 
         fields = ['color', 'size', 'quantity']
+
+
+# class PanItemForm(forms.ModelForm):
+
+#     class Meta:
+#         model = OrderItem
+
+#         fields = ['color', 'size', 'quantity', 'weight']

@@ -63,12 +63,11 @@ SIZE_CHOICES = (
 class Item(models.Model):
     title = models.CharField(max_length=100)
     price = models.FloatField()
-    color = models.CharField(max_length=20)
-    size = models.CharField(max_length=20)
-    image = models.ImageField()
-    image1 = models.ImageField(blank=True, null=True)
-    image2 = models.ImageField(blank=True, null=True)
-    image3 = models.ImageField(blank=True, null=True)
+    image = models.ImageField(upload_to='items/',
+                              blank=True)
+    image1 = models.ImageField(upload_to='items/', blank=True, null=True)
+    image2 = models.ImageField(upload_to='items/', blank=True, null=True)
+    image3 = models.ImageField(upload_to='items/', blank=True, null=True)
     discount_price = models.FloatField(null=True, blank=True)
     catagory = models.ForeignKey(Category, on_delete=models.CASCADE)
     label = models.CharField(choices=LABEL_CHOICES, max_length=20)
@@ -208,11 +207,6 @@ class OrderUpdate(models.Model):
 
     def __str__(self):
         return self.update_desc[0:7] + "..."
-
-
-class Choices(models.Model):
-    color = models.CharField(choices=COLOR_CHOICES, max_length=20)
-    size = models.CharField(choices=SIZE_CHOICES, max_length=20)
 
 
 class Instructions(models.Model):

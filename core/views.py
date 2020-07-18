@@ -10,7 +10,7 @@ from django.http import HttpResponse
 from django.conf import settings
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth import authenticate
-from core.forms import RequiredProductForm, CheckoutForm, SearchForm, ChoicesForm, OrderItemForm
+from core.forms import RequiredProductForm, CheckoutForm, SearchForm, OrderItemForm
 from allauth.account.forms import LoginForm, SignupForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
@@ -408,7 +408,6 @@ def order_history(request):
 
 def Ins(request):
     model = Instructions.objects.all()
-    print(model[0])
     return render(request, 'Instructions.html', {
         'ins': model
     })

@@ -79,8 +79,15 @@ CKEDITOR_UPLOAD_PATH = os.path.join(BASE_DIR, 'media/ckeditor')
 STATICFILES_DIRS = [STATIC_DIR]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles/')
 STATIC_URL = '/static/'
-MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+MEDIA_URL = '/media/'
+IC_ROOT = os.path.join(BASE_DIR, 'static/')
+STATICFILES_DIRS = [STATIC_DIR]
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles/')
+STATIC_URL = '/static/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+MEDIA_URL = '/media/'
+
 
 DATABASES = {
     # 'default': {
@@ -93,12 +100,20 @@ DATABASES = {
     # }
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'E2',
-        'USER': 'postgres',
-        'PASSWORD': '112456',
-        'HOST': 'localhost',
+        'NAME': 'd5mqaeioampt9l',
+        'USER': 'hxsefpbomubsqr',
+        'PASSWORD': 'ad0ad9f23781136fe0db4144e8e468973278409b34003394c17285045d83610c',
+        'HOST': 'ec2-54-234-44-238.compute-1.amazonaws.com',
         'PORT': '5432',
     }
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.postgresql_psycopg2',
+    #     'NAME': 'E2',
+    #     'USER': 'postgres',
+    #     'PASSWORD': '112456',
+    #     'HOST': 'localhost',
+    #     'PORT': '5432',
+    # }
     #     "default": {
     #         "ENGINE": "django.db.backends.sqlite3",
     #         "NAME": os.path.join(BASE_DIR, 'db.sqlite3')
@@ -139,9 +154,9 @@ EMAIL_HOST_PASSWORD = 'eloiqtdnbgpyyqte'
 
 ACCOUNT_EMAIL_CONFIRMATION_ANONYMOUS_REDIRECT_URL = True
 
-
 ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_USERNAME_REQUIRED = True
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None
+ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
 # ACCOUNT_EMAIL_VERIFICATION = ''
 ACCOUNT_EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URL = 'None'
