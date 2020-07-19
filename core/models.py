@@ -63,8 +63,8 @@ SIZE_CHOICES = (
 class Item(models.Model):
     title = models.CharField(max_length=100)
     price = models.FloatField()
-    image = models.ImageField(upload_to='items/',
-                              blank=True)
+    image = models.ImageField(
+        upload_to='items/', blank=False, null=False,)
     image1 = models.ImageField(upload_to='items/', blank=True, null=True)
     image2 = models.ImageField(upload_to='items/', blank=True, null=True)
     image3 = models.ImageField(upload_to='items/', blank=True, null=True)
@@ -99,15 +99,19 @@ class OrderItem(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
                              blank=True, null=True)
     item = models.ForeignKey(Item, on_delete=models.CASCADE)
-    color = models.CharField(max_length=20)
-    size = models.CharField(max_length=20)
+    # color = models.CharField(max_length=20)
+    # size = models.CharField(max_length=20)
     quantity = models.IntegerField(default=1)
     ordered = models.BooleanField(default=False)
-
+    details = models.TextField()
+    # image = models.ImageField(
+    #     upload_to='orderitems/%Y/%m/%d', blank=True, null=True)
+    # image = models.ImageField(upload_to='orderitems/', blank=True)
     # def __str__(self):
     #     return f"{self.quantity} of {self.item.title}"
+
     def __str__(self):
-        return f"{self.quantity} of {self.item.title} with {self.color} color and size {self.size}"
+        return self.item.title
 
     def get_item_title(self):
         return self.item.title
@@ -132,14 +136,15 @@ class OrderItem(models.Model):
 
 
 class Order(models.Model):
+    email = models.EmailField()
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
                              on_delete=models.CASCADE)
-    email = models.EmailField()
 
-    def random_string():
-        return str(random.randint(10000, 99999))
-    rand_value = random_string()
-    order_id = models.CharField(default=rand_value, max_length=255)
+    # def random_string():
+    #     return str(random.randint(10000, 99999))
+    # rand_value = random_string()
+    # order_id = models.CharField(default=rand_value, max_length=255)
+    order_id = models.AutoField(primary_key=True)
     Product = models.ForeignKey(
         Item, on_delete=models.CASCADE, blank=True, null=True)
     items = models.ManyToManyField(OrderItem)
@@ -153,7 +158,7 @@ class Order(models.Model):
                                         blank=True, null=True)
 
     def __str__(self):
-        return f"{self.user.username} with the email {self.email}"
+        return self.email
 
     def get_total(self):
         total = 0

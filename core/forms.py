@@ -99,7 +99,7 @@ class OrderItemForm(forms.ModelForm):
     class Meta:
         model = OrderItem
 
-        fields = ['color', 'size', 'quantity']
+        fields = ['details', 'quantity']
 
 
 # class PanItemForm(forms.ModelForm):

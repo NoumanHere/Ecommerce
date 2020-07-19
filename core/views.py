@@ -49,9 +49,10 @@ def item_detail(request, slug):
             ordered_date = timezone.now()
             user = request.user
             quantity = form.cleaned_data['quantity']
-            color = form.cleaned_data['color']
-            size = form.cleaned_data['size']
-            print(color)
+            print(quantity)
+            # image = form.cleaned_data['image']
+            # print(image)
+            details = form.cleaned_data['details']
             ordered_date = timezone.now()
             order_qs = Order.objects.all().filter(
                 user=user, email=request.user.email, ordered=False)
@@ -59,12 +60,11 @@ def item_detail(request, slug):
             if order_qs.exists():
                 order = order_qs[0]
                 print(order)
-                if order.items.filter(item__slug=item.slug, color=color, size=size, user=request.user).exists():
+                if order.items.filter(item__slug=item.slug, details=details, user=request.user).exists():
                     order_item = OrderItem.objects.get(
                         user=user,
                         item=item,
-                        color=color,
-                        size=size
+                        details=details,
                     )
                     quantity = form.cleaned_data['quantity']
                     print(quantity)
@@ -76,8 +76,7 @@ def item_detail(request, slug):
                     order_item = OrderItem.objects.create(
                         user=user,
                         item=item,
-                        color=form.cleaned_data['color'],
-                        size=form.cleaned_data['size'],
+                        details=form.cleaned_data['details'],
                         quantity=form.cleaned_data['quantity']
                     )
                     order_item.save()
@@ -92,8 +91,7 @@ def item_detail(request, slug):
                 order_item = OrderItem.objects.create(
                     user=user,
                     item=item,
-                    color=form.cleaned_data['color'],
-                    size=form.cleaned_data['size'],
+                    details=form.cleaned_data['details'],
                     quantity=form.cleaned_data['quantity']
                 )
                 order.items.add(order_item)
@@ -281,7 +279,7 @@ def user_order_pdf(request, order_id):
                                  })
         response = HttpResponse(content_type='application/pdf')
         response['Content-Disposition'] = 'filename="order_{}.pdf"'.format(
-            order.id)
+            order.order_id)
         weasyprint.HTML(string=html).write_pdf(response,
                                                stylesheets=[weasyprint.CSS(
                                                    settings.STATIC_ROOT + 'css/pdf.css')])
@@ -294,7 +292,7 @@ def user_order_pdf(request, order_id):
 
 @staff_member_required
 def admin_order_pdf(request, order_id):
-    order = get_object_or_404(Order, id=order_id, ordered=True)
+    order = get_object_or_404(Order, order_id=order_id, ordered=True)
     user = request.user
     email = request.user.email
     html = render_to_string('pdf.html',
@@ -302,7 +300,7 @@ def admin_order_pdf(request, order_id):
                              })
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = 'filename="order_{}.pdf"'.format(
-        order.id)
+        order.order_id)
     weasyprint.HTML(string=html).write_pdf(response,
                                            stylesheets=[weasyprint.CSS(
                                                settings.STATIC_ROOT + 'css/pdf.css')])

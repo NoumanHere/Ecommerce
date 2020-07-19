@@ -38,12 +38,12 @@ admin.site.register(Item, ItemAdmin)
 
 def order_pdf(obj):
     return mark_safe('<a href="{}">PDF</a>'.format(
-        reverse('core:admin_order_pdf', args=[obj.id])))
+        reverse('core:admin_order_pdf', args=[obj.order_id])))
     order_pdf.short_description = 'Invoice'
 
 
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ['user', 'ordered', order_pdf]
+    list_display = ['email', 'user', 'ordered', order_pdf]
     list_filter = ['ordered']
 
 
