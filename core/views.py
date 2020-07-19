@@ -234,17 +234,13 @@ class CheckoutView(LoginRequiredMixin, View):
                 full_name = form.cleaned_data['full_name']
                 email = self.request.user.email
                 phone_number = form.cleaned_data['phone_number']
-                region = form.cleaned_data['region']
                 address = form.cleaned_data['address']
-                city = form.cleaned_data['city']
                 billing_address = Billing_Address(
                     user=user,
                     full_name=full_name,
                     email=email,
                     phone_number=phone_number,
-                    region=region,
                     address=address,
-                    city=city
                 )
                 billing_address.save()
                 order.billing_address = billing_address
@@ -404,7 +400,7 @@ def order_history(request):
     })
 
 
-def Ins(request):
+def Insturctions(request):
     model = Instructions.objects.all()
     return render(request, 'Instructions.html', {
         'ins': model

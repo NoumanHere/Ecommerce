@@ -183,9 +183,7 @@ class Billing_Address(models.Model):
     full_name = models.CharField(max_length=50, blank=True, null=True)
     email = models.EmailField()
     phone_number = PhoneNumberField()
-    region = models.CharField(max_length=50)
     address = models.CharField(max_length=250)
-    city = models.CharField(max_length=100)
 
     def __str__(self):
         return self.user.username

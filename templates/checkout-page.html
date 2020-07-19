@@ -7,17 +7,17 @@
     <!-- Navbar -->
 
     <!--Main layout-->
-    <main class="mt-3 pt-3">
+    <main class="mt-0 pt-0">
         <div class="container wow fadeIn">
 
             <!-- Heading -->
-            <h2 class="my-5 h2 text-center">Checkout form</h2>
+            <h2 class="my-4 h2 text-center">Checkout form</h2>
 
             <!--Grid row-->
-            <div class="row">
+            <div class="row justify-content-center">
 
                 <!--Grid column-->
-                <div class="col-md-8 mb-4">
+                <div class="col-md-8 mb-4 ">
 
                     <!--Card-->
                     <div class="card">
@@ -28,10 +28,10 @@
                             <div class="row">
 
                                 <!--Grid column-->
-                                <div class="col-md-10 mb-2">
+                                <div class="col-md-12 mb-2">
 
                                     <!--firstName-->
-                                    <div class="md-form mb-5">
+                                    <div class="md-form mb-3">
                                         <!-- <input type="text" id="firstName" class="form-control"> -->
                                         {{form.full_name}}
                                         <label for="firstName" class="">Full name</label>
@@ -46,39 +46,29 @@
                                 {{form.phone_number}}
                                 <label for="phone_number" class="">Phone Number</label>
                             </div>
-                            <div class="row">
-                                <div class="md-form mb-5">
-                                    {{form.region}}
-                                    <!-- <input type="text" id="address" class="form-control" placeholder="1234 Main St"> -->
-                                    <label for="region" class="">Region</label>
-                                </div>
 
-                                <!--address-->
-                                <div class="md-form mb-5">
-                                    {{form.address}}
-                                    <!-- <input type="text" id="address" class="form-control" placeholder="1234 Main St"> -->
-                                    <label for="address" class="">Address</label>
-                                </div>
-
-                                <div class="md-form mb-5">
-                                    {{form.city}}
-                                    <!-- <input type="text" id="address" class="form-control" placeholder="1234 Main St"> -->
-                                    <label for="address" class="">City</label>
-                                </div>
+                            <div class="md-form mb-5">
+                                {{form.address}}
+                                <!-- <input type="text" id="address" class="form-control" placeholder="1234 Main St"> -->
+                                <label for="address" class="">Address</label>
                             </div>
 
-                            <button class="btn btn-primary btn-lg btn-block" type="submit">Continue to checkout</button> {% csrf_token %}
-                        </form>
+                            <!--address-->
 
                     </div>
-                    <!--/.Card-->
+
+                    <button class="btn btn-primary btn-lg btn-block" type="submit">Continue to checkout</button> {% csrf_token %}
+                    </form>
 
                 </div>
-
-
+                <!--/.Card-->
 
             </div>
-            <!--Grid column-->
+
+
+
+        </div>
+        <!--Grid column-->
 
         </div>
         <!--Grid row-->

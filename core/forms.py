@@ -49,25 +49,25 @@ class CheckoutForm(forms.Form):
         }
     ))
 
-    region = forms.CharField(widget=forms.TextInput(
-        attrs={
-            'id': "region",
-            'class': 'form-control',
-            'placeholder': 'Region'
-        }
-    ))
+    # region = forms.CharField(widget=forms.TextInput(
+    #     attrs={
+    #         'id': "region",
+    #         'class': 'form-control',
+    #         'placeholder': 'Region'
+    #     }
+    # ))
     address = forms.CharField(widget=forms.TextInput(
         attrs={
             'id': "address",
             'class': 'form-control',
-            'placeholder': '1234 Main Street 1'
+            'placeholder': 'Street - City - Region'
         }
     ))
-    city = forms.CharField(widget=forms.TextInput(attrs={
-        'id': "address",
-        'class': 'form-control',
-        'placeholder': 'Your City'
-    }))
+    # city = forms.CharField(widget=forms.TextInput(attrs={
+    #     'id': "address",
+    #     'class': 'form-control',
+    #     'placeholder': 'Your City'
+    # }))
 
 
 # class ChoicesForm(forms.ModelForm):
