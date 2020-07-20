@@ -35,6 +35,8 @@ LOGIN_REDIRECT_URL = '/'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
+    'django_brotli.middleware.BrotliMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -42,8 +44,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 ROOT_URLCONF = 'Ecommerce.urls'
 
@@ -101,23 +103,23 @@ DATABASES = {
     #     'HOST': 'ec2-54-234-44-238.compute-1.amazonaws.com',
     #     'PORT': '5432',
     # }
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'E2',
-        'USER': 'postgres',
-        'PASSWORD': '112456',
-        'HOST': 'localhost',
-        'PORT': '5432',
-    }
-    # 3rd is below
     # 'default': {
     #     'ENGINE': 'django.db.backends.postgresql_psycopg2',
-    #     'NAME': 'd2oa00jte90r0l',
-    #     'USER': 'zzpowykeyckahs',
-    #     'PASSWORD': '6499a36f36d1296009a9b3927bc948f85f2f84d99f4bf7181eef4893d4d92ce6',
-    #     'HOST': 'ec2-52-202-66-191.compute-1.amazonaws.com',
+    #     'NAME': 'E2',
+    #     'USER': 'postgres',
+    #     'PASSWORD': '112456',
+    #     'HOST': 'localhost',
     #     'PORT': '5432',
     # }
+    # 3rd is below
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'd2oa00jte90r0l',
+        'USER': 'zzpowykeyckahs',
+        'PASSWORD': '6499a36f36d1296009a9b3927bc948f85f2f84d99f4bf7181eef4893d4d92ce6',
+        'HOST': 'ec2-52-202-66-191.compute-1.amazonaws.com',
+        'PORT': '5432',
+    }
     #     "default": {
 
     #         "ENGINE": "django.db.backends.sqlite3",

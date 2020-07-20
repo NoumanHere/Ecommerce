@@ -1,8 +1,7 @@
-{% extends 'profile.html' %} {% include 'head.html' %}{% block table %}
-{% load humanize %} 
+{% extends 'profile.html' %} {% include 'head.html' %}{% block table %} {% load humanize %}{% include 'scripts.html' %}
 <h3 style="text-align:center;">Order History</h3>
 
-<div class="table-responsive">
+<div class="table table-hover table-sm">
     <table class="table">
         <thead>
             <tr>

@@ -9,5 +9,6 @@
   "files.exclude": {
     "**/*.pyc": true
   },
-  "python.linting.enabled": true
+  "python.linting.enabled": true,
+  "git.ignoreLimitWarning": true
 }
