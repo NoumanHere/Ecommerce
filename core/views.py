@@ -1,16 +1,14 @@
 from allauth.account.forms import ChangePasswordForm
-from django.contrib.postgres.search import TrigramSimilarity
-from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank
+from django.contrib.postgres.search import TrigramSimilarity, SearchVector, SearchQuery, SearchRank
 from django.utils.safestring import mark_safe
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-import json
 import weasyprint
 from django.template.loader import render_to_string
 from django.http import HttpResponse
 from django.conf import settings
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth import authenticate
-from core.forms import RequiredProductForm, CheckoutForm, SearchForm, OrderItemForm
+from core.forms import RequiredProductForm, CheckoutForm, SearchForm, OrderItemForm, ProofForm
 from allauth.account.forms import LoginForm, SignupForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
@@ -19,7 +17,9 @@ from django.contrib import messages
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render, get_object_or_404, redirect, reverse
 from django.views.generic import ListView, DetailView, View
-from .models import Item, OrderItem, Order, RequiredProduct, Category, Billing_Address, Profile, OrderUpdate, Instructions
+from .models import Item, OrderItem, Order, RequiredProduct, Category, Billing_Address, Profile, OrderUpdate, Instructions, Proof
+from . import filters
+from .filters import ItemsFilter
 
 
 def product_list(request, category_slug=None):
@@ -402,13 +402,82 @@ def order_history(request):
 
 def Insturctions(request):
     model = Instructions.objects.all()
-    return render(request, 'Instructions.html', {
-        'ins': model
-    })
+    if request.method == 'POST':
+        form = ProofForm(data=request.POST, files=request.FILES)
+        if form.is_valid():
+            order_id = form.cleaned_data['order_id']
+            print(order_id)
+            Order_Proof = Order.objects.all().filter(user=request.user, order_id=order_id)
+            print(Order_Proof)
+            print(order_id)
+            proof_image = form.cleaned_data['proof_image']
+            proof_description = form.cleaned_data['proof_description']
+            if Order_Proof.filter(order_id=order_id).exists():
+                full_proof = Proof(
+                    order_id=order_id,
+                    proof_description=proof_description,
+                    proof_image=proof_image
+                )
+                full_proof.save()
+                messages.info(
+                    request, 'Your proof was submitted successfully.')
+                return redirect('core:product_list')
+            else:
+                messages.info(
+                    request, 'Your credentials don not match, please try again.')
+                return redirect('core:Instructions')
+        else:
+            form = ProofForm()
+        return render(request, 'Instructions.html', {
+            'form': form
+        })
+    else:
+        form = ProofForm()
+        return render(request, 'Instructions.html', {
+            'form': form,
+            'ins': model
+        })
 
 
 def testview(request):
+    if request.method == 'POST':
+        form = ProofForm(data=request.POST, files=request.FILES)
+        if form.is_valid():
+            order_id = form.cleaned_data['order_id']
+            print(order_id)
+            Order_Proof = Order.objects.all().filter(user=request.user, order_id=order_id)
+            print(Order_Proof)
+            proof_image = form.cleaned_data['proof_image']
+            proof_description = form.cleaned_data['proof_description']
+            if Order_Proof.filter(order_id=order_id).exists():
+                full_proof = Proof(
+                    order_id=order_id,
+                    proof_description=proof_description,
+                    proof_image=proof_image
+                )
+                full_proof.save()
+                messages.info(
+                    request, 'Your proof was submitted successfully.')
+                return redirect('core:product_list')
+            else:
+                messages.info(
+                    request, 'Your credentials don not match, please try again.')
+                return redirect('core:Instructions')
+        else:
+            form = ProofForm()
+        return render(request, 'Instructions.html', {
+            'form': form
+        })
+    else:
+        form = ProofForm()
+        return render(request, 'Instructions.html', {
+            'form': form
+        })
+
+
+def all_products(request):
     items = Item.objects.all()
-    return render(request, 'test.html', {
-        'item': items
+    f = ItemsFilter(request.GET, queryset=items)
+    return render(request, 'home.html', {
+        'filter': f
     })

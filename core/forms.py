@@ -1,8 +1,7 @@
 from django import forms
 from allauth.account.forms import LoginForm
 from django.forms import ModelForm
-from core.models import RequiredProduct
-from core.models import Order, Item, OrderItem
+from core.models import Order, Item, OrderItem, RequiredProduct, Proof
 from allauth.account.forms import ChangePasswordForm
 
 
@@ -102,9 +101,8 @@ class OrderItemForm(forms.ModelForm):
         fields = ['details', 'quantity']
 
 
-# class PanItemForm(forms.ModelForm):
+class ProofForm(forms.ModelForm):
+    class Meta:
+        model = Proof
 
-#     class Meta:
-#         model = OrderItem
-
-#         fields = ['color', 'size', 'quantity', 'weight']
+        fields = '__all__'

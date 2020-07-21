@@ -1,0 +1,94 @@
+{% extends 'base.html' %} {% load static %} {% block content %}{% include 'scripts.html' %} {% load crispy_forms_tags %}
+<!-- Navbar -->
+<!-- Navbar -->
+
+
+{% include 'slider.html' %}
+
+<!--Main layout-->
+<main>
+
+    <div class="row">
+        <div class="coloumn">
+            <div class="card card-body">
+                <form type='submit'>
+                    {{ filter.form|crispy }}
+                    <button type="submit"> Search</button> {% csrf_token %}
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    {% for obj in filter.qs %} <img src="{{ obj.image.url }}" alt=""> - ${{ obj.price }}<br /> {% endfor %}
+    <section class="text-center mb-4">
+
+        <!--Grid row-->
+
+        <div class="row wow fadeIn">
+            <div class="row infinite-container">
+                {% for item in products %}
+
+                <!--Grid column-->
+                <!-- <div class="col-6 col-md-4 infinite-item"> -->
+                <div class="col-sm-4 col-6 mb-6">
+                    <!--Card-->
+                    <div class="card">
+                        <!--Card image-->
+                        <div class="view overlay">
+                            <img src="{{ item.image.url }}" alt=":)" class="card-img-top">
+                            <a href="{{item.get_absolute_url}}">
+                                <div class="mask rgba-white-slight"></div>
+                            </a>
+                        </div>
+                        <!--Card image-->
+
+                        <!--Card content-->
+                        <div class="card-body text-center">
+                            <!--Category & Title-->
+                            <a href="" class="grey-text">
+                                <h5>{{item.get_catagory_display}}</h5>
+                            </a>
+                            <h5>
+                                <strong>
+                                    <a href="{{item.get_absolute_url}}" class="dark-grey-text">{{ item.title }}
+                                        <span class="badge badge-pill {{item.get_label_display}}-color">NEW</span>
+                                    </a>
+                                </strong>
+                            </h5>
+
+                            <h4 class="font-weight-bold blue-text">
+                                {% if item.discount_price %}
+                                <strong>{{item.discount_price}}$</strong> {% else %}
+                                <strong>{{item.price}}$</strong> {% endif %}
+                            </h4>
+
+                        </div>
+                        <!--Card content-->
+
+                    </div>
+                    <br>
+                    <!--Card-->
+
+                </div>
+
+                {% endfor %}
+            </div>
+
+        </div>
+
+        <div class="d-flex justify-content-center" style="display:none;">
+
+        </div>
+    </section>
+    </nav>
+
+    </div>
+
+</main>
+
+
+<!-- SCRIPTS -->
+
+
+{% include 'scripts.html' %} {% endblock content %}

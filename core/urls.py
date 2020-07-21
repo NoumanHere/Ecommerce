@@ -4,7 +4,7 @@ from .views import (
     item_detail, CheckoutView, remove_from_cart,
     remove_single_item_from_cart, required_product, product_list, admin_order_pdf, UserProfile, Tracker,
     user_order_pdf, item_search, user_profile, order_history,
-    add_to_cart, order_summary, Insturctions, testview
+    add_to_cart, order_summary, Insturctions, testview, all_products
     # OrderSummaryView
 )
 
@@ -37,5 +37,6 @@ urlpatterns = [
     path('order-history/', order_history, name='order_history'),
     path('order-summary/', order_summary, name='order_summary'),
     path('Instructions/', Insturctions, name='Instructions'),
-    path('testview/', testview, name='testview')
+    path('testview/', testview, name='testview'),
+    path('f/', all_products, name='filter')
 ]

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Order, OrderItem, Item, RequiredProduct, Category, Billing_Address, Profile, OrderUpdate, Instructions
+from .models import Order, OrderItem, Item, RequiredProduct, Category, Billing_Address, Profile, OrderUpdate, Instructions, Proof
 from django.utils.safestring import mark_safe
 from django.urls import reverse
 
@@ -57,3 +57,4 @@ admin.site.register(OrderUpdate)
 
 
 admin.site.register(Instructions)
+admin.site.register(Proof)

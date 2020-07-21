@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     'phonenumber_field',
     'django.contrib.humanize',
     'allauth.socialaccount.providers.google',
+    'django_filters'
 ]
 SITE_ID = 1
 
@@ -103,23 +104,23 @@ DATABASES = {
     #     'HOST': 'ec2-54-234-44-238.compute-1.amazonaws.com',
     #     'PORT': '5432',
     # }
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.postgresql_psycopg2',
-    #     'NAME': 'E2',
-    #     'USER': 'postgres',
-    #     'PASSWORD': '112456',
-    #     'HOST': 'localhost',
-    #     'PORT': '5432',
-    # }
-    # 3rd is below
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'd2oa00jte90r0l',
-        'USER': 'zzpowykeyckahs',
-        'PASSWORD': '6499a36f36d1296009a9b3927bc948f85f2f84d99f4bf7181eef4893d4d92ce6',
-        'HOST': 'ec2-52-202-66-191.compute-1.amazonaws.com',
+        'NAME': 'E2',
+        'USER': 'postgres',
+        'PASSWORD': '112456',
+        'HOST': 'localhost',
         'PORT': '5432',
     }
+    # 3rd is below
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.postgresql_psycopg2',
+    #     'NAME': 'd2oa00jte90r0l',
+    #     'USER': 'zzpowykeyckahs',
+    #     'PASSWORD': '6499a36f36d1296009a9b3927bc948f85f2f84d99f4bf7181eef4893d4d92ce6',
+    #     'HOST': 'ec2-52-202-66-191.compute-1.amazonaws.com',
+    #     'PORT': '5432',
+    # }
     #     "default": {
 
     #         "ENGINE": "django.db.backends.sqlite3",

@@ -220,3 +220,12 @@ class Instructions(models.Model):
 
     def get_absolute_url(self):
         return reverse('core:user_invoice', order_id=order_id)
+
+
+class Proof(models.Model):
+    order_id = models.PositiveIntegerField()
+    proof_image = models.ImageField(upload_to='proofs/')
+    proof_description = models.TextField()
+
+    def __str__(self):
+        return str(self.order_id)

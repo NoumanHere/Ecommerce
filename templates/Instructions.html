@@ -1,17 +1,27 @@
-{% extends 'base.html' %} {% block content %}{% include 'scripts.html' %}
+{% extends 'base.html' %} {% block content %}{% include 'scripts.html' %} {% load crispy_forms_tags %}
 
 <title>Document</title>
 
 <body>
-    <main class="mt-5 pt-4">
+    <main class="mt-0 pt-2">
         <h2 style="text-align: center;">Instructions</h2>
         <div class=" container dark-grey-text mt-5 ">
             {% for i in ins %}
             <h3 style="text-align: center;">{{i.text | safe}}</h3>
             {% endfor %}
-            <p>Click <a href="{% url 'core:order_history' %}" title="">here</a> to check out your invoice.</p>
+            <h3>Click <a class="btn btn-light-blue" href="{% url 'core:order_history' %}" title="">here</a> to check out your invoice.</h3>
         </div>
     </main>
+    <hr>
+    <div class="container">
+        <h2 style="text-align: center">Send Order Proof</h2>
+        <p style="text-align: center">Please Submit your proof here with respect to order id below!</p>
+        <hr>
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %} {{form|crispy}}
+            <button class="btn btn-black" type="submit">Submit</button>
+        </form>
+    </div>
 </body>
 
 {% endblock %}
