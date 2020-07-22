@@ -19,7 +19,7 @@ from django.shortcuts import render, get_object_or_404, redirect, reverse
 from django.views.generic import ListView, DetailView, View
 from .models import Item, OrderItem, Order, RequiredProduct, Category, Billing_Address, Profile, OrderUpdate, Instructions, Proof
 from . import filters
-from .filters import ItemsFilter
+from .filters import ItemFilter
 
 
 def product_list(request, category_slug=None):
@@ -156,7 +156,6 @@ def remove_from_cart(request, slug):
             )[0]
             order.items.remove(order_item)
             order_item.delete()
-            print("This delete??/")
             messages.info(request, "This item was removed from your cart.")
             return redirect('core:order_summary')
         else:
@@ -477,7 +476,7 @@ def testview(request):
 
 def all_products(request):
     items = Item.objects.all()
-    f = ItemsFilter(request.GET, queryset=items)
+    f = ItemFilter(request.GET, queryset=items)
     return render(request, 'home.html', {
         'filter': f
     })

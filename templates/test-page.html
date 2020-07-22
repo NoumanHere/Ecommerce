@@ -83,15 +83,16 @@
             <div class="col-lg-4 col-md-12 mb-4">
                 {% if item.image1 %}
 
-                <img src="{{  item.image1.url }}" class="img-fluid" alt=""> {% endif %}
+                <a href="{{ item.get_absolute_url}}"><img src="{{ item.image1.url }}" class="img-fluid" alt=""></a>
+                {% endif %}
             </div>
             <!--Grid column-->
 
             <!--Grid column-->
             <div class="col-lg-4 col-md-6 mb-4">
-                {% if object.image1 %}
+                {% if item.image2 %}
 
-                <a href="{ item.get_absolute_url}}"><img src="{{ item.image2.url }}" class="img-fluid" alt=""></a>
+                <a href="{{ item.get_absolute_url}}"><img src="{{ item.image2.url }}" class="img-fluid" alt=""></a>
                 {% endif %}
 
             </div>
@@ -99,9 +100,10 @@
 
             <!--Grid column-->
             <div class="col-lg-4 col-md-6 mb-4">
-                {% if object.image1 %}
+                {% if item.image3 %}
 
-                <img src="{{ item.image3.url }}" class="img-fluid" alt=""> {% endif %}
+                <a href="{{ item.get_absolute_url}}"><img src="{{ item.image3.url }}" class="img-fluid" alt=""></a>
+                {% endif %}
 
             </div>
 

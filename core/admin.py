@@ -43,8 +43,10 @@ def order_pdf(obj):
 
 
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ['email', 'user', 'ordered', order_pdf]
-    list_filter = ['ordered']
+    list_display = ['email', 'user', 'order_id',
+                    'ordered', order_pdf, 'category']
+    readonly_fields = ['order_id']
+    list_filter = ['ordered', ]
 
 
 admin.site.register(Order, OrderAdmin)

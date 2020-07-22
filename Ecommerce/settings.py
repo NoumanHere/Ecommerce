@@ -5,7 +5,7 @@ ENVIRONMENT = os.getenv('ENVIRONMENT', 'development')
 
 DEBUG = True
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-STATIC_DIR = os.path.join(BASE_DIR, 'static')
+STATIC_DIR = os.path.join(BASE_DIR, 'static_in_env')
 SECRET_KEY = '-05sgp9!deq=q1nltm@^^2cc+v29i(tyybv3v2t77qi66czazj'
 ALLOWED_HOSTS = ['*']
 
@@ -75,17 +75,13 @@ USE_TZ = True
 
 # Static Files
 
-# STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static_files')]
-# STATIC_ROOT = '/home/nouman/STUDY/Project/JustDjango/django_project_boilerplate/static2/'
-CKEDITOR_UPLOAD_PATH = os.path.join(BASE_DIR, 'media/ckeditor')
-# STATICFILES_DIRS = [STATIC_DIR]
-# STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
-STATIC_URL = '/static/'
-MEDIA_URL = '/media/'
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static_in_env')]
-STATIC_ROOT = os.path.join(BASE_DIR, 'static_root/')
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
+CKEDITOR_UPLOAD_PATH = os.path.join(BASE_DIR, 'media/ckeditor')
+STATIC_URL = '/static/'
+STATICFILES_DIRS = [STATIC_DIR]
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+MEDIA_URL = '/media/'
 
 DATABASES = {
     # 'default': {
@@ -104,23 +100,23 @@ DATABASES = {
     #     'HOST': 'ec2-54-234-44-238.compute-1.amazonaws.com',
     #     'PORT': '5432',
     # }
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'E2',
-        'USER': 'postgres',
-        'PASSWORD': '112456',
-        'HOST': 'localhost',
-        'PORT': '5432',
-    }
-    # 3rd is below
     # 'default': {
     #     'ENGINE': 'django.db.backends.postgresql_psycopg2',
-    #     'NAME': 'd2oa00jte90r0l',
-    #     'USER': 'zzpowykeyckahs',
-    #     'PASSWORD': '6499a36f36d1296009a9b3927bc948f85f2f84d99f4bf7181eef4893d4d92ce6',
-    #     'HOST': 'ec2-52-202-66-191.compute-1.amazonaws.com',
+    #     'NAME': 'E2',
+    #     'USER': 'postgres',
+    #     'PASSWORD': '112456',
+    #     'HOST': 'localhost',
     #     'PORT': '5432',
     # }
+    # 3rd is below
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'd2oa00jte90r0l',
+        'USER': 'zzpowykeyckahs',
+        'PASSWORD': '6499a36f36d1296009a9b3927bc948f85f2f84d99f4bf7181eef4893d4d92ce6',
+        'HOST': 'ec2-52-202-66-191.compute-1.amazonaws.com',
+        'PORT': '5432',
+    }
     #     "default": {
 
     #         "ENGINE": "django.db.backends.sqlite3",
@@ -128,17 +124,15 @@ DATABASES = {
     #     }
 }
 
-if ENVIRONMENT == 'production':
-    DEBUG = False
-    SECRET_KEY = os.getenv('SECRET_KEY')
-    SESSION_COOKIE_SECURE = True
-    SECURE_BROWSER_XSS_FILTER = True
-    SECURE_CONTENT_TYPE_NOSNIFF = True
-    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-    SECURE_HSTS_SECONDS = 31536000
-    SECURE_REDIRECT_EXEMPT = []
-    SECURE_SSL_REDIRECT = True
-    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+SECRET_KEY = os.getenv('SECRET_KEY')
+SESSION_COOKIE_SECURE = True
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_HSTS_SECONDS = 31536000
+SECURE_REDIRECT_EXEMPT = []
+SECURE_SSL_REDIRECT = True
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 
 AUTHENTICATION_BACKENDS = [
@@ -163,7 +157,7 @@ EMAIL_HOST_PASSWORD = 'eloiqtdnbgpyyqte'
 ACCOUNT_EMAIL_CONFIRMATION_ANONYMOUS_REDIRECT_URL = True
 
 ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_USER_MODEL_USERNAME_FIELD = None
+ACCOUNT_USER_MODEL_USERNAME_FIELD = True
 ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
 # ACCOUNT_EMAIL_VERIFICATION = ''

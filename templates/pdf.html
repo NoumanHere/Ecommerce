@@ -15,9 +15,7 @@
         <b>Name: </b>{{ order.billing_address.full_name}}<br>
         <b>Email:</b> {{ order.billing_address.email }} <br>
         <b>Phone Number: </b>{{order.billing_address.phone_number}}<br>
-        <b>Region: </b> {{ order.billing_address.region }} <br>
         <b>Address: </b> {{ order.billing_address.address }} <br>
-        <b>City: </b> {{ order.billing_address.city }} <br>
         <b>Order Id: </b> {{ order.order_id }} <br>
         <h3>Items Details</h3>
         <table>
@@ -27,7 +25,6 @@
                     <th>Quantity</th>
                     <th>Cost</th>
                     <th>Discount Price</th>
-                    <th>Properties</th>
                 </tr>
             </thead>
             <tbody>
@@ -37,7 +34,6 @@
                     <td class="num">{{ item.quantity }}</td>
                     <td class="num">${{ item.get_single_item_price }}</td>
                     <td class="num">${{ item.get_discount_price }}</td>
-                    <td class="num">{{ item.size }} & {{ item.color }}</td>
                 </tr>
                 {% endfor %} {% if order.half_paid %}
                 <tr class="total">

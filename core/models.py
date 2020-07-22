@@ -160,6 +160,9 @@ class Order(models.Model):
     def __str__(self):
         return self.email
 
+    def category(self):
+        return self.Product.catagory
+
     def get_total(self):
         total = 0
         for order_item in self.items.all():
