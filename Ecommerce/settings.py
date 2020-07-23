@@ -1,14 +1,13 @@
 import os
-import dj_database_url
+# import dj_database_url
 
 ENVIRONMENT = os.getenv('ENVIRONMENT', 'development')
 
 DEBUG = False
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 STATIC_DIR = os.path.join(BASE_DIR, 'static_in_env')
-with open('Ecommerce/secret_key.txt') as f:
-    SECRET_KEY = f.read().strip()
-ALLOWED_HOSTS = ['127.0.0.1']
+SECRET_KEY = '-05sgp9!deq=q1nltm@^^2cc+v29i(tyybv3v2t77qi66czazj'
+ALLOWED_HOSTS = ['makutanu.herokuapp.com']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -85,49 +84,34 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 MEDIA_URL = '/media/'
 
 DATABASES = {
-    'default': {
-        # 'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        # 'NAME': 'd22q28ufavsb79',
-        # 'USER': 'pszmxzwfagfpvq',
-        # 'PASSWORD': 'b38376d2fad9429c11081fe98ed81b71650920771d2fb04b8d4ff1fe07fed17d',
-        # 'HOST': 'ec2-54-246-87-132.eu-west-1.compute.amazonaws.com',
-        # 'PORT': '5432',
-    }
-}
 
-# 'default': {
-#     'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#     'NAME': 'd5mqaeioampt9l',
-#     'USER': 'hxsefpbomubsqr',
-#     'PASSWORD': 'ad0ad9f23781136fe0db4144e8e468973278409b34003394c17285045d83610c',
-#     'HOST': 'ec2-54-234-44-238.compute-1.amazonaws.com',
-#     'PORT': '5432',
-# }
-# 'default': {
-#     'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#     'NAME': 'E2',
-#     'USER': 'postgres',
-#     'PASSWORD': '112456',
-#     'HOST': 'localhost',
-#     'PORT': '5432',
-# }
-# 3rd is below
-# 'default': {
-#     'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#     'NAME': 'd2oa00jte90r0l',
-#     'USER': 'zzpowykeyckahs',
-#     'PASSWORD': '6499a36f36d1296009a9b3927bc948f85f2f84d99f4bf7181eef4893d4d92ce6',
-#     'HOST': 'ec2-52-202-66-191.compute-1.amazonaws.com',
-#     'PORT': '5432',
-# }
-#     "default": {
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.postgresql_psycopg2',
+    #     'NAME': 'E2',
+    #     'USER': 'postgres',
+    #     'PASSWORD': '112456',
+    #     'HOST': 'localhost',
+    #     'PORT': '5432',
+    # }
+    # 3rd is below
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.postgresql_psycopg2',
+    #     'NAME': 'd2oa00jte90r0l',
+    #     'USER': 'zzpowykeyckahs',
+    #     'PASSWORD': '6499a36f36d1296009a9b3927bc948f85f2f84d99f4bf7181eef4893d4d92ce6',
+    #     'HOST': 'ec2-52-202-66-191.compute-1.amazonaws.com',
+    #     'PORT': '5432',
+    # }
+    #     "default": {
 
-#         "ENGINE": "django.db.backends.sqlite3",
-#         "NAME": os.path.join(BASE_DIR, 'db.sqlite3')
-#     }
+    #         "ENGINE": "django.db.backends.sqlite3",
+    #         "NAME": os.path.join(BASE_DIR, 'db.sqlite3')
+    #     }
 # }
+
 DATABASES['default'] = dj_database_url.parse(
     'postgres://zzpowykeyckahs:6499a36f36d1296009a9b3927bc948f85f2f84d99f4bf7181eef4893d4d92ce6@ec2-52-202-66-191.compute-1.amazonaws.com:5432/d2oa00jte90r0l', conn_max_age=600)
+
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
 SECURE_HSTS_SECONDS = 31536000
@@ -136,23 +120,23 @@ SECURE_SSL_REDIRECT = True
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 
 
-CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
-    }
-}
+# CACHES = {
+#     'default': {
+#         'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+#     }
+# }
 
-if ENVIRONMENT == 'production':
-    DEBUG = False
-    SECRET_KEY = os.getenv('SECRET_KEY')
-    SESSION_COOKIE_SECURE = True
-    SECURE_BROWSER_XSS_FILTER = True
-    SECURE_CONTENT_TYPE_NOSNIFF = True
-    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-    SECURE_HSTS_SECONDS = 31536000
-    SECURE_REDIRECT_EXEMPT = []
-    SECURE_SSL_REDIRECT = True
-    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+# if ENVIRONMENT == 'production':
+#     DEBUG = False
+#     SECRET_KEY = os.getenv('SECRET_KEY')
+#     SESSION_COOKIE_SECURE = True
+#     SECURE_BROWSER_XSS_FILTER = True
+#     SECURE_CONTENT_TYPE_NOSNIFF = True
+#     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+#     SECURE_HSTS_SECONDS = 31536000
+#     SECURE_REDIRECT_EXEMPT = []
+#     SECURE_SSL_REDIRECT = True
+#     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 
 AUTHENTICATION_BACKENDS = [
@@ -191,9 +175,17 @@ PWA_APP_BACKGROUND_COLOR = '#ffffff'
 PWA_APP_DISPLAY = 'standalone'
 PWA_APP_SCOPE = '/'
 PWA_APP_ORIENTATION = 'any'
-PWA_APP_START_URL = '/'
+PWA_APP_START_URL = "/?install=true"
 PWA_APP_STATUS_BAR_COLOR = 'default'
-PWA_APP_ICONS = [{'src': '/static/images/c.png', 'sizes': '192x192'}]
+PWA_APP_ICONS = [
+    {'src': '/static/images/c.png',
+     'sizes': '192x192',
+     "type": "image/png"},
+    {
+        "src": "/static/images/c.png",
+        "sizes": "512x512",
+        "type": "image/png"
+    }]
 PWA_APP_ICONS_APPLE = [
     {'src': '/static/images/b.png', 'sizes': '192x192'}]
 PWA_APP_SPLASH_SCREEN = [{'src': '/static/images/icons/splash-640x1136.png',

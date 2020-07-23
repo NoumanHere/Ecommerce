@@ -17,16 +17,7 @@
 
             <!-- Left -->
             <ul class="navbar-nav mr-auto">
-                <li class="nav-item">
-                    <a class="nav-link waves-effect" href="{% url 'core:product_list' %}">Products</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link waves-effect" href="{% url 'core:search' %}" target="">Search</a>
-                </li>
                 {% if request.user.is_authenticated %}
-                <li class="nav-item">
-                    <a class="nav-link waves-effect" href="{% url 'core:profile' %}" target="">Profile</a>
-                </li>
                 <li class="nav-item">
                     <a class="nav-link waves-effect" href="{% url 'core:tracker' %}" target="">Tracker</a>
                 </li>
@@ -40,20 +31,28 @@
                 {% endif %}
 
             </ul>
-
-            <!-- Right -->
             {% if request.user.is_authenticated %}
+            <ul class="navbar-nav">
+                <!-- Avatar -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-expanded="false">
+                        <i class="fa fa-user"></i>
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <li><a class="dropdown-item" href="{% url 'core:profile' %}">My profile</a></li>
+                        <li><a class="dropdown-item" href="#">Settings</a></li>
+                        <li><a class="dropdown-item" href="{% url 'account_logout' %}">Logout</a></li>
+                    </ul>
+                </li>
+            </ul>
+            <!-- Right -->
+
             <ul class="navbar-nav nav-flex-icons">
                 <li class="nav-item">
                     <a href="{% url 'core:order_summary' %}" class="nav-link waves-effect">
                         <span class="badge red z-depth-1 mr-1"> {{request.user|cart_items_count}} </span>
                         <i class="fa fa-shopping-cart"></i>
                         <span class="clearfix d-none d-sm-inline-block"> Cart </span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link waves-effect" href="{% url 'account_logout' %}">
-                        <span class="clearfix d-none d-sm-inline-block"> Logout</span>
                     </a>
                 </li>
             </ul>

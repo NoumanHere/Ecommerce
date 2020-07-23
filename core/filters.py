@@ -9,25 +9,9 @@ class ItemFilter(django_filters.FilterSet):
     #     widget=forms.Select(attrs={'ng-change': 'filterChanged()'}),
     #     empty_label="Any Item")
     price__lt = django_filters.NumberFilter(
-        field_name='price', lookup_expr='gt', widget=forms.TextInput(attrs=(
-            {
-                'type': 'hidden',
-                'name': 'price-min',
-                'id': 'multi7',
-                'min': 0,
-                'max': 1000
-            }
-        )))
+        field_name='price', lookup_expr='lt')
     price__gt = django_filters.NumberFilter(
-        field_name='price', lookup_expr='lt', widget=forms.TextInput(attrs=(
-            {
-                'type': 'hidden',
-                'name': 'price-max',
-                'id': 'multi7',
-                'min': 0,
-                'max': 1000
-            }
-        )))
+        field_name='price', lookup_expr='gt')
 
     class Meta:
         model = Item
