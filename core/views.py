@@ -22,10 +22,19 @@ from . import filters
 from .filters import ItemFilter
 
 
+def all_products(request):
+    items = Item.objects.all()
+    f = ItemFilter(request.GET, queryset=items)
+    return render(request, 'home.html', {
+        'filter': f
+    })
+
+
 def product_list(request, category_slug=None):
     category = None
     categories = Category.objects.all()
     products = Item.objects.all().order_by('-price')
+    f = ItemFilter(request.GET, queryset=products)
     if category_slug:
         category = get_object_or_404(Category, slug=category_slug)
         products = Item.objects.filter(catagory=category)
@@ -33,8 +42,9 @@ def product_list(request, category_slug=None):
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     return render(request,
-                  'home-page.html',
+                  'home.html',
                   {'category': category,
+                   'filter': f,
                    'categories': categories,
                    'products': products,
                    'page_obj': page_obj})
@@ -472,11 +482,3 @@ def testview(request):
         return render(request, 'Instructions.html', {
             'form': form
         })
-
-
-def all_products(request):
-    items = Item.objects.all()
-    f = ItemFilter(request.GET, queryset=items)
-    return render(request, 'home.html', {
-        'filter': f
-    })

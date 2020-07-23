@@ -6,8 +6,9 @@ ENVIRONMENT = os.getenv('ENVIRONMENT', 'development')
 DEBUG = False
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 STATIC_DIR = os.path.join(BASE_DIR, 'static_in_env')
-SECRET_KEY = '-05sgp9!deq=q1nltm@^^2cc+v29i(tyybv3v2t77qi66czazj'
-ALLOWED_HOSTS = ['makutanu.herokuapp.com']
+with open('Ecommerce/secret_key.txt') as f:
+    SECRET_KEY = f.read().strip()
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'makutanu.herokuapp.com']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -80,7 +81,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [STATIC_DIR]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
 DATABASES = {
@@ -93,14 +94,6 @@ DATABASES = {
         # 'HOST': 'localhost',
         # 'PORT': '5432',
     }
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.postgresql_psycopg2',
-    #     'NAME': 'E2',
-    #     'USER': 'postgres',
-    #     'PASSWORD': '112456',
-    #     'HOST': 'localhost',
-    #     'PORT': '5432',
-    # }
     # 3rd is below
     # 'default': {
     #     'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -120,12 +113,12 @@ DATABASES = {
 DATABASES['default'] = dj_database_url.parse(
     'postgres://zzpowykeyckahs:6499a36f36d1296009a9b3927bc948f85f2f84d99f4bf7181eef4893d4d92ce6@ec2-52-202-66-191.compute-1.amazonaws.com:5432/d2oa00jte90r0l', conn_max_age=600)
 
-CSRF_COOKIE_SECURE = True
-SESSION_COOKIE_SECURE = True
-SECURE_HSTS_SECONDS = 31536000
-SECURE_HSTS_PRELOAD = True
-SECURE_SSL_REDIRECT = True
-SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+# CSRF_COOKIE_SECURE = True
+# SESSION_COOKIE_SECURE = True
+# SECURE_HSTS_SECONDS = 31536000
+# SECURE_HSTS_PRELOAD = True
+# SECURE_SSL_REDIRECT = True
+# SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 
 
 # CACHES = {
@@ -176,22 +169,29 @@ ACCOUNT_EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URL = 'None'
 
 
 # Pwa Configurations
-PWA_APP_NAME = 'Ecommerce Site'
+PWA_APP_NAME = 'Ecommerce Lite'
 PWA_APP_DESCRIPTION = "My app description"
 PWA_APP_THEME_COLOR = '#0A0302'
 PWA_APP_BACKGROUND_COLOR = '#ffffff'
 PWA_APP_DISPLAY = 'standalone'
 PWA_APP_SCOPE = '/'
 PWA_APP_ORIENTATION = 'any'
-PWA_APP_START_URL = "/"
+PWA_APP_START_URL = '/?install=true'
 PWA_APP_STATUS_BAR_COLOR = 'default'
 PWA_APP_ICONS = [
     {'src': '/static/images/c.png',
      'sizes': '192x192',
-     "type": "image/png"},
+     "type": "image/png",
+     "purpose": "maskable"},
+
     {
         "src": "/static/images/c.png",
         "sizes": "512x512",
+        "type": "image/png"
+    },
+    {
+        "src": "/static/images/c.png",
+        "sizes": "360x360",
         "type": "image/png"
     }]
 PWA_APP_ICONS_APPLE = [
