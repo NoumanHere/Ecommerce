@@ -1,5 +1,5 @@
 import os
-# import dj_database_url
+import dj_database_url
 
 ENVIRONMENT = os.getenv('ENVIRONMENT', 'development')
 
@@ -85,6 +85,14 @@ MEDIA_URL = '/media/'
 
 DATABASES = {
 
+    'default': {
+        # 'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        # 'NAME': 'E2',
+        # 'USER': 'postgres',
+        # 'PASSWORD': '112456',
+        # 'HOST': 'localhost',
+        # 'PORT': '5432',
+    }
     # 'default': {
     #     'ENGINE': 'django.db.backends.postgresql_psycopg2',
     #     'NAME': 'E2',
@@ -107,7 +115,7 @@ DATABASES = {
     #         "ENGINE": "django.db.backends.sqlite3",
     #         "NAME": os.path.join(BASE_DIR, 'db.sqlite3')
     #     }
-# }
+}
 
 DATABASES['default'] = dj_database_url.parse(
     'postgres://zzpowykeyckahs:6499a36f36d1296009a9b3927bc948f85f2f84d99f4bf7181eef4893d4d92ce6@ec2-52-202-66-191.compute-1.amazonaws.com:5432/d2oa00jte90r0l', conn_max_age=600)
@@ -175,7 +183,7 @@ PWA_APP_BACKGROUND_COLOR = '#ffffff'
 PWA_APP_DISPLAY = 'standalone'
 PWA_APP_SCOPE = '/'
 PWA_APP_ORIENTATION = 'any'
-PWA_APP_START_URL = "/?install=true"
+PWA_APP_START_URL = "/"
 PWA_APP_STATUS_BAR_COLOR = 'default'
 PWA_APP_ICONS = [
     {'src': '/static/images/c.png',
