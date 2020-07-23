@@ -1,8 +1,11 @@
 from django.conf import settings
 from django.conf.urls.static import static
+from django.conf.urls import handler404
 from django.contrib import admin
 from django.urls import path, include
 from django.contrib import admin
+
+handler404 = 'core.views.view_404'
 
 admin.site.site_title = "Mbata's Site"
 admin.site.site_header = "Ecommerce"

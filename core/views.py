@@ -482,3 +482,7 @@ def testview(request):
         return render(request, 'Instructions.html', {
             'form': form
         })
+
+
+def view_404(request, exception):
+    return render(request, '404.html')
